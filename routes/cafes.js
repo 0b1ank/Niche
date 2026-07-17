@@ -1,0 +1,63 @@
+const express = require("express")
+const { client } = require("../config/db")
+const { upload } = require("../config/upload")
+const { ensureAuthenticated, ensureOwner } = require("../middleware/auth")
+
+const router = express.Router()
+
+// GET /cafes/new — owner-only create form
+router.get("/new", ensureAuthenticated, ensureOwner, (req, res) => {
+  res.render("create-cafe", { user: req.user })
+})
+
+// POST /cafes — insert cafe owned by the logged-in owner
+router.post("/", ensureAuthenticated, ensureOwner, (req, res, next) => {
+  upload.single("cafe_img")(req, res, (err) => {
+    if (err) {
+      return res.status(400).render("create-cafe", {
+        user: req.user,
+        error: err.message,
+      })
+    }
+    next()
+  })
+}, async (req, res) => {
+  try {
+    const { cname, caddress, ccity, czip, cphonenum, cdescription } = req.body
+
+    if (!cname) {
+      return res.status(400).render("create-cafe", {
+        user: req.user,
+        error: "Cafe name is required",
+      })
+    }
+
+    const cafeImg = req.file ? `/uploads/${req.file.filename}` : null
+
+    await client.query(
+      `INSERT INTO cafes
+        (owner_id, cname, caddress, ccity, czip, cphonenum, cdescription, cafe_img)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        req.user.uid,
+        cname,
+        caddress || null,
+        ccity || null,
+        czip || null,
+        cphonenum || null,
+        cdescription || null,
+        cafeImg,
+      ]
+    )
+
+    res.redirect("/")
+  } catch (err) {
+    console.error("create cafe failed:", err.message)
+    res.status(500).render("create-cafe", {
+      user: req.user,
+      error: "Could not create cafe. Please try again.",
+    })
+  }
+})
+
+module.exports = router
