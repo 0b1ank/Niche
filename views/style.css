@@ -1,13 +1,13 @@
 /* --- Global Reset & Variables --- */
 :root {
     --bg-color: #f4f6f9;
-    --sidebar-bg: #1e1e2f;
+    --sidebar-bg: #433423;
     --sidebar-text: #b5b5c3;
     --sidebar-hover: #3a3b50;
     --accent-color: #3b82f6;
     --text-dark: #333333;
     --card-bg: #ffffff;
-    --sidebar-width: 240px;
+    --sidebar-width: 150px;
 }
 
 * {
@@ -22,6 +22,43 @@ body {
     color: var(--text-dark);
     display: flex;
     min-height: 100vh;
+}
+
+.fixed-login-btn {
+    position: absolute;
+    top: 10px;                  /* Distancing from the very top screen edge */
+    right: 10px;                /* Distancing from the far right screen edge */
+    /* z-index: 1000;              Forces it to sit cleanly on top of all page scrolling layers */
+    
+    /* Sleek, interactive styling */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #725a37;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 60px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); Adds a subtle drop shadow to make it float */
+    transition: all 0.2s ease-in-out;
+}
+
+.fixed-login-btn i {
+    font-size: 1rem;
+}
+
+/* Dynamic Interactive States */
+.fixed-login-btn:hover {
+    background-color: #4a3f2f;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.fixed-login-btn:active {
+    transform: translateY(0);
 }
 
 /* --- Sidebar Styling --- */
@@ -70,7 +107,7 @@ body {
 
 .nav-links li a i,
 .sidebar-footer a i {
-    font-size: 1.2rem;
+    font-size: 2rem;
 }
 
 /* Hover & Active States */
@@ -104,6 +141,7 @@ body {
 .top-header h1 {
     font-size: 1.8rem;
     font-weight: 600;
+    margin-bottom: 15px;
 }
 
 .card {
@@ -116,6 +154,56 @@ body {
 .card h3 {
     margin-bottom: 12px;
 }
+
+/* --- Landing Area & Controls (Now Global!) --- */
+.landing {
+    background-image: url('cafebkg.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 100px;
+    color: rgb(255, 255, 255);
+    border-radius:2px;
+    background-blend-mode: overlay;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark tint so white text pops */
+}
+
+.controls {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent background looks great over images */
+    backdrop-filter: blur(5px); /* Trendy glassmorphism effect */
+    padding: 15px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.controls label {
+    font-weight: 600;
+}
+
+.controls select, 
+.controls button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.controls button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.controls button:hover {
+    background-color: #2563eb;
+}
+
 
 /* --- Responsive Design (Mobile view) --- */
 @media (max-width: 768px) {
@@ -130,7 +218,7 @@ body {
     }
 
     .sidebar-header {
-        padding: 15px;
+        padding: 0px;
     }
 
     .nav-links {
@@ -140,10 +228,10 @@ body {
     }
 
     .nav-links li a {
-        padding: 15px;
+        padding: 8px;
         flex-direction: column;
-        font-size: 0.8rem;
-        gap: 4px;
+        font-size: 1rem;
+        /* gap: 4px; */
     }
 
     .nav-links li a.active {
@@ -152,11 +240,24 @@ body {
     }
 
     .sidebar-footer {
-        display: none; /* Hide logout on simple mobile menu to save space */
+        display: none; /* Hide logout on mobile to save vertical space */
     }
 
     .main-content {
         margin-left: 0;
         padding: 20px;
+    }
+
+    /* Adjust the landing block padding slightly so it doesn't crowd mobile screens */
+    .landing {
+        padding: 0px 0px;
+    }
+
+    /* Stack controls vertically on mobile instead of row layout */
+    .controls {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
     }
 }
