@@ -2,8 +2,9 @@ CREATE TABLE users (
   uid       SERIAL PRIMARY KEY,
   uname     TEXT NOT NULL,
   uemail    TEXT UNIQUE NOT NULL,
-  upassword TEXT NOT NULL,
+  upassword TEXT, -- nullable so Google-only accounts can exist
   pfp       TEXT,
+  google_id TEXT UNIQUE,
   urole     TEXT NOT NULL DEFAULT 'user' CHECK (urole IN ('user', 'owner'))
 );
 

@@ -34,10 +34,31 @@
             <h1>Niche</h1>
         </header>
         <section class="content-body">
-            <div class="card">
-                <h3>Main Section</h3>
-                <p>This is your main content area. It is styled to automatically push to the right of the sidebar on desktop screens.</p>
-            </div>
+            <h2>Cafes</h2>
+
+            <%# If the query returned no rows, show a friendly empty state %>
+            <% if (!cafes || cafes.length === 0) { %>
+                <div class="card">
+                    <p>No cafes yet. Owners can add one with Create Cafe.</p>
+                </div>
+            <% } else { %>
+                <%# cafes is the array passed from res.render in server.js %>
+                <% cafes.forEach(function (cafe) { %>
+                    <div class="card">
+                        <h3><%= cafe.cname %></h3>
+                        <% if (cafe.ccity) { %>
+                            <p><%= cafe.ccity %></p>
+                        <% } %>
+                        <% if (cafe.cdescription) { %>
+                            <p><%= cafe.cdescription %></p>
+                        <% } %>
+                        <%# cafe_img is a path like /uploads/.... that express.static can serve %>
+                        <% if (cafe.cafe_img) { %>
+                            <img src="<%= cafe.cafe_img %>" alt="<%= cafe.cname %>" width="200">
+                        <% } %>
+                    </div>
+                <% }) %>
+            <% } %>
         </section>
     </main>
 
