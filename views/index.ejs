@@ -12,15 +12,20 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <h2>Niche</h2>
+            <% if (typeof user !== "undefined" && user) { %>
+                <p>Hi, <%= user.uname %></p>
+            <% } %>
         </div>
         <ul class="nav-links">
-            <li><a href="#" class="active"><i class='bx bx-grid-alt'></i> <span>Home</span></a></li>
-            <li><a href="#"><i class='bx bx-user'></i> <span>Create</span></a></li>
+            <li><a href="/" class="active"><i class='bx bx-grid-alt'></i> <span>Home</span></a></li>
+            <% if (user && user.urole === "owner") { %>
+            <li><a href="/cafes/new"><i class='bx bx-plus'></i> <span>Create Cafe</span></a></li>
+            <% } %>
             <li><a href="#"><i class='bx bx-chat'></i> <span>Profile</span></a></li>
             <li><a href="#"><i class='bx bx-cog'></i> <span>Feed</span></a></li>
         </ul>
         <div class="sidebar-footer">
-            <a href="#"><i class='bx bx-log-out'></i> <span>Logout</span></a>
+            <a href="/logout"><i class='bx bx-log-out'></i> <span>Logout</span></a>
         </div>
     </aside>
 

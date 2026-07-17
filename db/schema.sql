@@ -1,9 +1,10 @@
 CREATE TABLE users (
   uid       SERIAL PRIMARY KEY,
-  uname     TEXT,
+  uname     TEXT NOT NULL,
   uemail    TEXT UNIQUE NOT NULL,
   upassword TEXT NOT NULL,
-  pfp       TEXT
+  pfp       TEXT,
+  urole     TEXT NOT NULL DEFAULT 'user' CHECK (urole IN ('user', 'owner'))
 );
 
 CREATE TABLE cafes (

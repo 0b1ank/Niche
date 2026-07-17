@@ -1,0 +1,33 @@
+<h1>Register</h1>
+<form action="/register" method="POST" enctype="multipart/form-data">
+  <div>
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+  </div>
+  <div>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+  <div>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+  </div>
+  <div>
+    <label for="pfp">Profile image (optional)</label>
+    <input type="file" id="pfp" name="pfp" accept="image/*">
+  </div>
+  <fieldset>
+    <legend>Account type</legend>
+    <label>
+      <input type="radio" name="role" value="user" checked>
+      User — browse, post, and review cafes
+    </label>
+    <br>
+    <label>
+      <input type="radio" name="role" value="owner">
+      Owner — everything a user can do, plus create a cafe
+    </label>
+  </fieldset>
+  <button type="submit">Register</button>
+</form>
+<a href="/login">Already have an account? Log in</a>
