@@ -9,6 +9,11 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
+    
+    <a href="login.html" class="fixed-login-btn">
+        <i class='bx bx-user-circle'></i>
+        <span>Log In</span>
+    </a>
     <aside class="sidebar">
         <div class="sidebar-header">
         </div>
@@ -16,58 +21,40 @@
             <li><a href="index.html" class="active"><i class='bx bx-home-alt-2'></i> <span></span></a></li>
             <li><a href="#"><i class="bx bx-book-add"></i> <span></span></a></li>
             <!-- <li><a href="#"><i class='bx bx-chat'></i> <span>Profile</span></a></li> -->
-            <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li>
+            <!-- <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li> -->
         </ul>
         
     </aside>
 
     <main class="main-content">
-        <!-- <div class="login-header"> -->
-            <h2>Profile</h2>
-            <div class="profile-wrapper">
-                <div class="avatar-profile" id="avatarPreview">
-                    <i class='bx bx-user'></i>
-                </div>
-
-                <div class="profile-group">
-                    <h3 for="username"><strong>Username: </strong></h3>
-                    <div>
-                        <p> mockUsername</p>
-                    </div>
-                </div>
-
-                <div class="profile-group">
-                    <h3 for="username">Email: </h3>
-                    <div>
-                        <p> mockEmail</p>
-                    </div>
-                </div>
-            </div>
-            
+        <div class="login-header">
+            <h2>Create a New Account</h2>
+            <p>Please enter your information</p>
+        </div>
 
         <!-- New Account Processing Form Matrix -->
         <form id="newAccountForm">
             <div class="input-group">
-                <label for="username">Username:</label>
+                <label for="username">Username</label>
                 <div class="input-wrapper">
                     <i class='bx bx-user'></i>
-                    <!-- <input type="text" id="username" placeholder="Enter your username" required> -->
+                    <input type="text" id="username" placeholder="Enter your username" required>
                 </div>
             </div>
 
             <div class="input-group">
-                <label for="username">Email:</label>
+                <label for="username">Email</label>
                 <div class="input-wrapper">
                     <i class='bx bx-user'></i>
-                    <!-- <input type="text" id="email" placeholder="Enter your email" required> -->
+                    <input type="text" id="email" placeholder="Enter your email" required>
                 </div>
             </div>
 
             <div class="input-group">
-                <label for="password">Password:</label>
+                <label for="password">Password</label>
                 <div class="input-wrapper">
                     <i class='bx bx-lock-alt'></i>
-                    <!-- <input type="password" id="password" placeholder="Enter your password" required> -->
+                    <input type="password" id="password" placeholder="Enter your password" required>
                 </div>
             </div>
             <br/>
@@ -78,11 +65,19 @@
                 <!-- Primary Stacked Button (Top) -->
                 <input type="file" id="realFileInput" accept="image/*" style="display: none;">
     
-                <!-- Container holding the button and its new preview friend side-by-side
+                <!-- Container holding the button and its new preview friend side-by-side -->
                 <div class="upload-row">
+                    <!-- The trigger button -->
+                    <button type="button" class="user-btn upload-btn" id="uploadTriggerBtn">
+                        <i class="bx bx-upload"></i> 
+                        <span>Upload Photo</span>
+                    </button>
                     
-                    
-                </div> -->
+                    <!-- The circle preview container -->
+                    <div class="avatar-preview-circle" id="avatarPreview">
+                        <i class='bx bx-user'></i> <!-- Default placeholder icon -->
+                    </div>
+                </div>
                 
                 <!-- Secondary Role Selection Row (Bottom) -->
                 <label for="password">Account Type</label>
@@ -97,7 +92,7 @@
                     </a>
                     
                 </div>
-                <a href="index.html" class="submit-btn">Log Out</a>
+                <a href="loggedIn.html" class="submit-btn">Create New Account</a>
             </div>
 
         </form>
