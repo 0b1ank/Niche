@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niche Cafes</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+    
+    <a href="login.html" class="fixed-login-btn">
+        <i class='bx bx-user-circle'></i>
+        <span>Log In</span>
+    </a>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="active"><i class='bx bx-home-alt-2'></i> <span></span></a></li>
+            <li><a href="#"><i class="bx bx-book-add"></i> <span></span></a></li>
+            <!-- <li><a href="#"><i class='bx bx-chat'></i> <span>Profile</span></a></li> -->
+            <!-- <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li> -->
+        </ul>
+        
+    </aside>
+
+    <main class="main-content">
+        <div class="login-header">
+            <h2>Welcome Back</h2>
+            <p>Log in to access your saved Niche Cafes</p>
+        </div>
+
+        <!-- Login Processing Form Matrix -->
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">Username or Email</label>
+                <div class="input-wrapper">
+                    <i class='bx bx-user'></i>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <i class='bx bx-lock-alt'></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Sign In</button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <!-- New Register Routing Endpoint Requested -->
+        <a href="register.html" class="create-account-btn">Create New Account</a>
+    </main>
+
+    <script>
+        // Temporary intercept logic managing UI testing flow
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault(); // Stop page from refreshing on form submit
+            
+            const user = document.getElementById('username').value;
+            console.log("Authenticating user session:", user);
+            
+            // For now, redirect straight back to your dashboard page on submission
+            window.location.href = "index.html"; 
+        });
+    </script>
+
+</body>
+</html>
