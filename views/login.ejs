@@ -1,0 +1,27 @@
+<%# page title %>
+<h1>Login</h1>
+<%# show an error message if one got passed in %>
+<% if (typeof error !== "undefined" && error) { %>
+  <p style="color: red;"><%= error %></p>
+<% } %>
+<%# form posts email and password to /login %>
+<form action="/login" method="POST">
+  <div>
+    <%# email label %>
+    <label for="email">Email</label>
+    <%# email input, name has to be email because passport looks for that %>
+    <input type="email" id="email" name="email" required>
+  </div>
+  <div>
+    <%# password label %>
+    <label for="password">Password</label>
+    <%# password input %>
+    <input type="password" id="password" name="password" required>
+  </div>
+  <%# submit button kicks off the post %>
+  <button type="submit">Log in</button>
+</form>
+<%# google oauth link goes to our auth router %>
+<p><a href="/auth/google">Continue with Google</a></p>
+<%# link over to register if they dont have an account %>
+<a href="/register">Need an account? Register</a>
