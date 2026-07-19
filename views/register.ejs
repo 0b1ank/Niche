@@ -1,0 +1,46 @@
+<%# page title %>
+<h1>Register</h1>
+<%# multipart so we can upload the profile pic file %>
+<form action="/register" method="POST" enctype="multipart/form-data">
+  <div>
+    <%# username field %>
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+  </div>
+  <div>
+    <%# email field has to be unique in the db %>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+  <div>
+    <%# password gets hashed on the server before saving %>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+  </div>
+  <div>
+    <%# optional profile image, multer field name is pfp %>
+    <label for="pfp">Profile image (optional)</label>
+    <input type="file" id="pfp" name="pfp" accept="image/*">
+  </div>
+  <%# pick user or owner role %>
+  <fieldset>
+    <legend>Account type</legend>
+    <label>
+      <%# default role is user %>
+      <input type="radio" name="role" value="user" checked>
+      User — browse, post, and review cafes
+    </label>
+    <br>
+    <label>
+      <%# owner can also create cafes later %>
+      <input type="radio" name="role" value="owner">
+      Owner — everything a user can do, plus create a cafe
+    </label>
+  </fieldset>
+  <%# submit creates the account %>
+  <button type="submit">Register</button>
+</form>
+<%# or sign up with google instead %>
+<p><a href="/auth/google">Continue with Google</a></p>
+<%# go back to login if they already have an account %>
+<a href="/login">Already have an account? Log in</a>
