@@ -1,46 +1,146 @@
-<%# page title %>
-<h1>Register</h1>
-<%# multipart so we can upload the profile pic file %>
-<form action="/register" method="POST" enctype="multipart/form-data">
-  <div>
-    <%# username field %>
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" required>
-  </div>
-  <div>
-    <%# email field has to be unique in the db %>
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
-  </div>
-  <div>
-    <%# password gets hashed on the server before saving %>
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required>
-  </div>
-  <div>
-    <%# optional profile image, multer field name is pfp %>
-    <label for="pfp">Profile image (optional)</label>
-    <input type="file" id="pfp" name="pfp" accept="image/*">
-  </div>
-  <%# pick user or owner role %>
-  <fieldset>
-    <legend>Account type</legend>
-    <label>
-      <%# default role is user %>
-      <input type="radio" name="role" value="user" checked>
-      User — browse, post, and review cafes
-    </label>
-    <br>
-    <label>
-      <%# owner can also create cafes later %>
-      <input type="radio" name="role" value="owner">
-      Owner — everything a user can do, plus create a cafe
-    </label>
-  </fieldset>
-  <%# submit creates the account %>
-  <button type="submit">Register</button>
-</form>
-<%# or sign up with google instead %>
-<p><a href="/auth/google">Continue with Google</a></p>
-<%# go back to login if they already have an account %>
-<a href="/login">Already have an account? Log in</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niche Cafes - Register</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+    <a href="/login" class="fixed-login-btn">
+        <i class='bx bx-user-circle'></i>
+        <span>Log In</span>
+    </a>
+
+    <aside class="sidebar">
+        <div class="sidebar-header"></div>
+        <ul class="nav-links">
+            <li><a href="/" class="active"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
+            <li><a href="#"><i class="bx bx-book-add"></i> <span>Add</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="login-header">
+            <h2>Create a New Account</h2>
+            <p>Please enter your information</p>
+        </div>
+
+        <%# Express POST form with multipart/form-data for image uploads %>
+        <form action="/register" method="POST" enctype="multipart/form-data" id="newAccountForm">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <i class='bx bx-user'></i>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <i class='bx bx-envelope'></i>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <i class='bx bx-lock-alt'></i>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+            </div>
+            <br/>
+
+            <!-- Main Action Control Container -->
+            <div class="action-group">
+                <!-- Profile Image Upload Field (Multer field name: pfp) -->
+                <input type="file" id="pfp" name="pfp" accept="image/*" style="display: none;">
+
+                <div class="upload-row">
+                    <button type="button" class="user-btn upload-btn" id="uploadTriggerBtn">
+                        <i class="bx bx-upload"></i> 
+                        <span>Upload Photo</span>
+                    </button>
+
+                    <div class="avatar-preview-circle" id="avatarPreview">
+                        <i class='bx bx-user'></i>
+                    </div>
+                </div>
+
+                <!-- Account Type Role Selection -->
+                <label>Account Type</label>
+
+                <%# Hidden form input ensuring the chosen role submits to backend %>
+                <input type="hidden" name="role" id="roleInput" value="user">
+
+                <div class="role-row">
+                    <button type="button" class="user-btn role-btn role-btn-owner" id="ownerBtn">
+                        <i class='bx bx-briefcase'></i>
+                        <span>Owner</span>
+                    </button>
+                    <button type="button" class="user-btn role-btn role-btn-user active" id="userBtn">
+                        <i class='bx bx-user'></i>
+                        <span>User</span>
+                    </button>
+                </div>
+
+                <button type="submit" class="submit-btn">Register</button>
+            </div>
+        </form>
+
+        <br>
+        <!-- OAuth and Existing Account Endpoints -->
+        <div class="auth-links" style="text-align: center;">
+            <p><a href="/auth/google">Continue with Google</a></p>
+            <p><a href="/login">Already have an account? Log in</a></p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. File Upload Interaction & Live Preview Logic
+            const uploadTriggerBtn = document.getElementById('uploadTriggerBtn');
+            const realFileInput = document.getElementById('pfp');
+            const avatarPreview = document.getElementById('avatarPreview');
+
+            uploadTriggerBtn.addEventListener('click', () => {
+                realFileInput.click();
+            });
+
+            realFileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.innerHTML = `<img src="${e.target.result}" alt="User Profile Preview">`;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // 2. Role Selector Switcher linked to backend hidden input
+            const userBtn = document.getElementById('userBtn');
+            const ownerBtn = document.getElementById('ownerBtn');
+            const roleInput = document.getElementById('roleInput');
+
+            userBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                roleInput.value = 'user';
+                userBtn.classList.add('active');
+                ownerBtn.classList.remove('active');
+            });
+
+            ownerBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                roleInput.value = 'owner';
+                ownerBtn.classList.add('active');
+                userBtn.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
