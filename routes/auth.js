@@ -41,7 +41,7 @@ async function handleGoogleProfile(req, profile) {
     return { user: byGoogle.rows[0] }
   }
 
-  // 2) Same email already exists → link Google id
+  // 2) Same email already exists -> link Google id
   const byEmail = await client.query(
     `SELECT uid, uname, uemail, pfp, urole, google_id
      FROM users WHERE uemail = $1`,
