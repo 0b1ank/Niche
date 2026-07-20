@@ -3,27 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Niche Cafes</title>
+    <title>Niche Cafes - Register</title>
     <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="style.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-    
-    <a href="login.html" class="fixed-login-btn">
+    <a href="/login" class="fixed-login-btn">
         <i class='bx bx-user-circle'></i>
         <span>Log In</span>
     </a>
+
     <aside class="sidebar">
-        <div class="sidebar-header">
-        </div>
+        <div class="sidebar-header"></div>
         <ul class="nav-links">
-            <li><a href="index.html" class="active"><i class='bx bx-home-alt-2'></i> <span></span></a></li>
-            <li><a href="#"><i class="bx bx-book-add"></i> <span></span></a></li>
-            <!-- <li><a href="#"><i class='bx bx-chat'></i> <span>Profile</span></a></li> -->
-            <!-- <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li> -->
+            <li><a href="/" class="active"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
+            <li><a href="#"><i class="bx bx-book-add"></i> <span>Add</span></a></li>
         </ul>
-        
     </aside>
 
     <main class="main-content">
@@ -32,21 +28,21 @@
             <p>Please enter your information</p>
         </div>
 
-        <!-- New Account Processing Form Matrix -->
-        <form id="newAccountForm">
+        <%# Express POST form with multipart/form-data for image uploads %>
+        <form action="/register" method="POST" enctype="multipart/form-data" id="newAccountForm">
             <div class="input-group">
                 <label for="username">Username</label>
                 <div class="input-wrapper">
                     <i class='bx bx-user'></i>
-                    <input type="text" id="username" placeholder="Enter your username" required>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
                 </div>
             </div>
 
             <div class="input-group">
-                <label for="username">Email</label>
+                <label for="email">Email</label>
                 <div class="input-wrapper">
-                    <i class='bx bx-user'></i>
-                    <input type="text" id="email" placeholder="Enter your email" required>
+                    <i class='bx bx-envelope'></i>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
                 </div>
             </div>
 
@@ -54,132 +50,97 @@
                 <label for="password">Password</label>
                 <div class="input-wrapper">
                     <i class='bx bx-lock-alt'></i>
-                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
                 </div>
             </div>
             <br/>
 
             <!-- Main Action Control Container -->
             <div class="action-group">
-                
-                <!-- Primary Stacked Button (Top) -->
-                <input type="file" id="realFileInput" accept="image/*" style="display: none;">
-    
-                <!-- Container holding the button and its new preview friend side-by-side -->
+                <!-- Profile Image Upload Field (Multer field name: pfp) -->
+                <input type="file" id="pfp" name="pfp" accept="image/*" style="display: none;">
+
                 <div class="upload-row">
-                    <!-- The trigger button -->
                     <button type="button" class="user-btn upload-btn" id="uploadTriggerBtn">
                         <i class="bx bx-upload"></i> 
                         <span>Upload Photo</span>
                     </button>
-                    
-                    <!-- The circle preview container -->
+
                     <div class="avatar-preview-circle" id="avatarPreview">
-                        <i class='bx bx-user'></i> <!-- Default placeholder icon -->
+                        <i class='bx bx-user'></i>
                     </div>
                 </div>
-                
-                <!-- Secondary Role Selection Row (Bottom) -->
-                <label for="password">Account Type</label>
+
+                <!-- Account Type Role Selection -->
+                <label>Account Type</label>
+
+                <%# Hidden form input ensuring the chosen role submits to backend %>
+                <input type="hidden" name="role" id="roleInput" value="user">
+
                 <div class="role-row">
-                    <a href="#" class="user-btn role-btn role-btn-owner">
+                    <button type="button" class="user-btn role-btn role-btn-owner" id="ownerBtn">
                         <i class='bx bx-briefcase'></i>
                         <span>Owner</span>
-                    </a>
-                    <a href="#" class="user-btn role-btn role-btn-user active">
+                    </button>
+                    <button type="button" class="user-btn role-btn role-btn-user active" id="userBtn">
                         <i class='bx bx-user'></i>
                         <span>User</span>
-                    </a>
-                    
+                    </button>
                 </div>
-                <a href="loggedIn.html" class="submit-btn">Create New Account</a>
-            </div>
 
+                <button type="submit" class="submit-btn">Register</button>
+            </div>
         </form>
 
+        <br>
+        <!-- OAuth and Existing Account Endpoints -->
+        <div class="auth-links" style="text-align: center;">
+            <p><a href="/auth/google">Continue with Google</a></p>
+            <p><a href="/login">Already have an account? Log in</a></p>
+        </div>
     </main>
 
     <script>
-        // Temporary intercept logic managing UI testing flow
-        document.getElementById('newAccountForm').addEventListener('newAccount', (e) => {
-            e.preventDefault(); // Stop page from refreshing on form submit
-            
-            const user = document.getElementById('username').value;
-            console.log("Authenticating user session:", user);
-            
-            // For now, redirect straight back to your dashboard page on submission
-            window.location.href = "index.html"; 
-        });
-
         document.addEventListener('DOMContentLoaded', () => {
+            // 1. File Upload Interaction & Live Preview Logic
             const uploadTriggerBtn = document.getElementById('uploadTriggerBtn');
-            const realFileInput = document.getElementById('realFileInput');
+            const realFileInput = document.getElementById('pfp');
             const avatarPreview = document.getElementById('avatarPreview');
 
-            // 1. Forward the click event from your fancy button over to the hidden input tag
             uploadTriggerBtn.addEventListener('click', () => {
                 realFileInput.click();
             });
 
-            // 2. Listen for when a file is successfully chosen by the browser user
             realFileInput.addEventListener('change', function() {
-                const file = this.files[0]; // Grab the first chosen file
-
+                const file = this.files[0];
                 if (file) {
                     const reader = new FileReader();
-
-                    // When the file reader engine successfully processes the document stream:
                     reader.onload = function(e) {
-                        // Generate a real dynamic image tag containing the processed data URL
                         avatarPreview.innerHTML = `<img src="${e.target.result}" alt="User Profile Preview">`;
                     }
-
-                    // Instruct the browser to read the local target file into a base64 encoded URL string
                     reader.readAsDataURL(file);
                 }
             });
+
+            // 2. Role Selector Switcher linked to backend hidden input
+            const userBtn = document.getElementById('userBtn');
+            const ownerBtn = document.getElementById('ownerBtn');
+            const roleInput = document.getElementById('roleInput');
+
+            userBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                roleInput.value = 'user';
+                userBtn.classList.add('active');
+                ownerBtn.classList.remove('active');
+            });
+
+            ownerBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                roleInput.value = 'owner';
+                ownerBtn.classList.add('active');
+                userBtn.classList.remove('active');
+            });
         });
-        // 1. Initialize a state tracking variable. Default to 'user'.
-        let chosenRole = 'user'; 
-
-        // 2. Grab references to both elements in the DOM
-        const userBtn = document.querySelector('.role-btn-user');
-        const ownerBtn = document.querySelector('.role-btn-owner');
-
-        // 3. Setup the Selection Listener Logic for the USER button
-        userBtn.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevents the link '#' from jumping the page scroll
-            
-            chosenRole = 'user';    // Update our tracking variable
-            
-            userBtn.classList.add('active');     // Light up the user button
-            ownerBtn.classList.remove('active'); // Turn off the owner button
-            console.log("Current role selection updated to:", chosenRole);
-        });
-
-        // 4. Setup the Selection Listener Logic for the OWNER button
-        ownerBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            
-            chosenRole = 'owner';   // Update our tracking variable
-            
-            ownerBtn.classList.add('active');    // Light up the owner button
-            userBtn.classList.remove('active');  // Turn off the user button
-            console.log("Current role selection updated to:", chosenRole);
-        });
-
-        // 5. Example Form Submit function showing how that variable is used
-        function registerAccount() {
-            const registrationData = {
-                username: document.getElementById('username').value, // assuming you have an input with this ID
-                roleId: chosenRole                                   // This safely reads 'user' or 'owner'!
-            };
-
-            console.log("Submitting account payload to database:", registrationData);
-            // Next step: send registrationData to your database server!
-        }
-
     </script>
-
 </body>
 </html>
