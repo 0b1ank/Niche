@@ -60,44 +60,41 @@
                 <!-- Profile Image Upload Field (Multer field name: pfp) -->
                 <input type="file" id="pfp" name="pfp" accept="image/*" style="display: none;">
 
-                <div class="upload-row">
-                    <button type="button" class="user-btn upload-btn" id="uploadTriggerBtn">
-                        <i class="bx bx-upload"></i> 
-                        <span>Upload Photo</span>
-                    </button>
-
-                    <div class="avatar-preview-circle" id="avatarPreview">
-                        <i class='bx bx-user'></i>
-                    </div>
-                </div>
-
-                <!-- Account Type Role Selection -->
-                <label>Account Type</label>
-
                 <%# Hidden form input ensuring the chosen role submits to backend %>
                 <input type="hidden" name="role" id="roleInput" value="user">
 
                 <div class="role-row">
+                    <div class="upload-row">
+                        <button type="button" class="user-btn upload-btn" id="uploadTriggerBtn">
+                            <i class="bx bx-upload"></i> 
+                            <span>Upload Photo</span>
+                        </button>
+
+                        <div class="avatar-preview-circle" id="avatarPreview">
+                            <i class='bx bx-user'></i>
+                        </div>
+                    </div>
+
+                    <!-- Account Type Role Selection -->
+                    <label>Account Type</label>
                     <button type="button" class="user-btn role-btn role-btn-owner" id="ownerBtn">
                         <i class='bx bx-briefcase'></i>
                         <span>Owner</span>
                     </button>
-                    <button type="button" class="user-btn role-btn role-btn-user active" id="userBtn">
+                    <button type="button" class="user-btn role-btn role-btn-user" id="userBtn">
                         <i class='bx bx-user'></i>
                         <span>User</span>
                     </button>
                 </div>
+                
+                <!-- <button type="submit" class="submit-btn"><a href="/loggedIn" >Register</a></button> -->
 
-                <button type="submit" class="submit-btn">Register</button>
+                <a href="/loggedIn" class="submit-btn">Register</a>
+                <a href="/auth/google" class="create-account-btn">Continue with Google</a>
+                <a href="/login" class="create-account-btn">Already have an account? Log in</a>
             </div>
         </form>
-
-        <br>
-        <!-- OAuth and Existing Account Endpoints -->
-        <div class="auth-links" style="text-align: center;">
-            <p><a href="/auth/google">Continue with Google</a></p>
-            <p><a href="/login">Already have an account? Log in</a></p>
-        </div>
+        
     </main>
 
     <script>

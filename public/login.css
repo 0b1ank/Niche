@@ -1,13 +1,10 @@
-/* --- Global Reset & Variables --- */
+/* --- Login Minimalist Theme --- */
 :root {
-    --bg-color: #f4f6f9;
-    --sidebar-bg: #433423;
-    --sidebar-text: #b5b5c3;
-    --sidebar-hover: #3a3b50;
-    --accent-color: #3b82f6;
-    --text-dark: #333333;
-    --card-bg: #ffffff;
-    --sidebar-width: 150px;
+    --login-bg: #f4f6f9;
+    --form-bg: #ffffff;
+    --text-main: #333333;
+    --accent-primary: #b6956a; /* Matches your main theme accent */
+    --border-color: #e2e8f0;
 }
 
 * {
@@ -18,246 +15,300 @@
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-dark);
-    display: flex;
+    background-color: var(--login-bg);
+    color: var(--text-main);
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
-.fixed-login-btn {
-    position: absolute;
-    top: 10px;                  /* Distancing from the very top screen edge */
-    right: 10px;                /* Distancing from the far right screen edge */
-    /* z-index: 1000;              Forces it to sit cleanly on top of all page scrolling layers */
-    
-    /* Sleek, interactive styling */
-    display: inline-flex;
+/* --- Form Container Card --- */
+.login-container {
+    background-color: var(--form-bg);
+    width: 100%;
+    max-width: 400px;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.login-header p {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+/* --- Input Groups --- */
+.input-group {
+    position: relative;
+    margin-top: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #555;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
     align-items: center;
-    gap: 8px;
-    background-color: #725a37;
+}
+
+/* Injected Boxicon Placement inside the field boundary */
+.input-wrapper i {
+    position: absolute;
+    left: 14px;
+    color: #aaa;
+    font-size: 1.2rem;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 12px 14px 12px 42px; /* Extra left padding handles the absolute icon */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--accent-primary);
+}
+
+/* --- Interactive Controls --- */
+.submit-btn {
+    width: 100%;
+    background-color: #1e1e2f; /* Deep dark tone coordinates with your sidebar */
     color: #ffffff;
     border: none;
-    padding: 10px 18px;
-    border-radius: 60px;
-    font-size: 0.95rem;
-    font-weight: 500;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); Adds a subtle drop shadow to make it float */
+    transition: background-color 0.2s;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.submit-btn:hover {
+    background-color: var(--accent-primary);
+}
+
+/* 1. Main Action Wrapper Layout Management */
+.action-group {
+    display: flex;
+    flex-direction: column;   /* Stacks child items vertically */
+    justify-content: center;
+
+    align-items: center;
+    
+    gap: 12px;                /* Creates uniform distance between the top button and the bottom row */
+    margin-top:10px;
+    /* padding: 20px;            Healthy padding cushion *around* the entire group */
+    max-width: 400px;         /* Keeps the control block beautifully proportioned */
+}
+
+/* 2. Baseline UI Shared Layout for all 3 Link Component Buttons */
+.user-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;                 /* Distance between icon and text */
+    padding: 12px 18px;       /* Padding *inside* the buttons */
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+/* 3. Top Upload Accent Styling Customizations */
+.upload-btn {
+    background-color: #1e1e2f; /* Deep brand color */
+    color: #ffffff;
+    width: 120%;               /* Spans full width of the parent box */
+}
+
+.upload-btn:hover {
+    background-color: #3b82f6; /* Pops to clean accent color on hover */
+}
+
+/* 4. Bottom Row Container Setup */
+.role-row {
+    display: flex;
+    gap: 25px;                 /* Spacing between Owner and User buttons */
+    width: 100%;
+}
+
+/* 5. Sub-Role Button Configurations */
+.role-btn {
+    flex: 1;                   /* Forces both buttons to stay exactly equal size */
+    background-color: transparent;
+    color: #1e1e2f;
+    border: 2px solid #1e1e2f;
+}
+
+.role-btn:hover {
+    background-color: #454556;
+    color: #ffffff;
+}
+
+/* --- Split Divider Layout Line --- */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 24px 0;
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.divider:not(:empty)::before { margin-right: .5em; }
+.divider:not(:empty)::after { margin-left: .5em; }
+
+/* --- Secondary Action Routing Option --- */
+.create-account-btn {
+    display: block;
+    text-align: center;
+    width: 100%;
+    background-color: transparent;
+    color: #1e1e2f;
+    border: 2px solid #1e1e2f;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
     transition: all 0.2s ease-in-out;
 }
 
-.fixed-login-btn i {
-    font-size: 1rem;
-}
-
-/* Dynamic Interactive States */
-.fixed-login-btn:hover {
-    background-color: #4a3f2f;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.fixed-login-btn:active {
-    transform: translateY(0);
-}
-
-/* --- Sidebar Styling --- */
-.sidebar {
-    width: var(--sidebar-width);
-    background-color: var(--sidebar-bg);
-    color: var(--sidebar-text);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    left: 0;
-    top: 0;
-    transition: all 0.3s ease;
-}
-
-.sidebar-header {
-    padding: 24px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-header h2 {
+.create-account-btn:hover {
+    background-color: #1e1e2f;
     color: #ffffff;
+}
+
+/* Align the upload button and circle preview horizontally side-by-side */
+.upload-row {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Spacing between button and circle */
+    width: 100%;
+}
+
+/* Make sure the upload button yields space for the circle friend */
+.upload-btn {
+    flex: 1; /* Automatically stretches to take up remaining row room */
+}
+
+/* The Avatar Circle Container */
+.avatar-preview-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Perfect circle */
+    background-color: #e2e8f0; /* Soft gray placeholder background */
+    border: 2px solid #1e1e2f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Clips incoming uploaded imagery to circular borders */
+    flex-shrink: 0; /* Prevents the circle from squishing on tiny monitors */
+}
+
+/* Default placeholder icon inside the circle */
+.avatar-preview-circle i {
     font-size: 1.5rem;
-    font-weight: 600;
+    color: #64748b;
 }
 
-.nav-links {
-    list-style: none;
-    padding: 20px 0;
-    flex-grow: 1; /* Pushes the footer to the bottom */
+/* Actual image presentation styling once loaded */
+.avatar-preview-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Crops image cleanly into a square/circle without distortion */
 }
 
-.nav-links li a, 
-.sidebar-footer a {
+/* 1. Parent Wrapper to Center the Profile on the Page */
+.profile-wrapper {
+    display: flex;
+    justify-content: left; /* Centers horizontally */
+    align-items: left;     /* Centers vertically if the wrapper has height */
+    width: 100%;
+    padding: 20px 0;         /* Adds breathing room top and bottom */
+}
+
+/* 2. Enlarged Avatar Circle Container */
+.avatar-profile {
+    width: 160px;            /* Increased from 100px to 160px for a larger profile */
+    height: 160px;           /* Increased from 100px to 160px to maintain a perfect circle */
+    border-radius: 50%; 
+    background-color: #e2e8f0; 
+    border: 3px solid #1e1e2f; /* Made the border slightly thicker to match the larger size */
     display: flex;
     align-items: center;
-    padding: 14px 24px;
-    color: var(--sidebar-text);
-    text-decoration: none;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-    gap: 12px;
+    justify-content: center;
+    overflow: hidden; 
+    flex-shrink: 0; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Optional: adds soft depth beneath it */
 }
 
-.nav-links li a i,
-.sidebar-footer a i {
-    font-size: 2rem;
+/* 3. Enlarged Default Placeholder Icon */
+.avatar-profile i {
+    font-size: 3rem;         /* Increased from 1.5rem to match the larger canvas */
+    color: #64748b;
 }
 
-/* Hover & Active States */
-.nav-links li a:hover,
-.sidebar-footer a:hover {
-    background-color: var(--sidebar-hover);
-    color: #ffffff;
+/* 4. Actual Image Presentation (Stays the same, handles scaling beautifully) */
+.avatar-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
 }
 
-.nav-links li a.active {
-    background-color: var(--accent-color);
-    color: #ffffff;
-    border-left: 4px solid #ffffff;
-}
-
-.sidebar-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 10px 0;
-}
-
-/* --- Main Content Area --- */
-.main-content {
-    margin-left: var(--sidebar-width); /* Offsets content so it doesn't hide behind sidebar */
-    flex-grow: 1;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.top-header h1 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.card {
-    background-color: var(--card-bg);
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.card h3 {
-    margin-bottom: 12px;
-}
-
-/* --- Landing Area & Controls (Now Global!) --- */
-.landing {
-    background-image: url('cafebkg.jpg'); 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    padding: 100px;
-    color: rgb(255, 255, 255);
-    border-radius:2px;
-    background-blend-mode: overlay;
-    background-color: rgba(0, 0, 0, 0.7); /* Dark tint so white text pops */
-}
-
-.controls {
+.profile-group {
+    position: relative;
     margin-top: 20px;
-    background: rgba(255, 255, 255, 0.2); /* Semi-transparent background looks great over images */
-    backdrop-filter: blur(5px); /* Trendy glassmorphism effect */
-    padding: 15px;
-    border-radius: 5px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.controls label {
+    display: block;
+    font-size: 0.85rem;
     font-weight: 600;
+    margin-bottom: 6px;
+    color: #555;
 }
 
-.controls select, 
-.controls button {
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    outline: none;
-}
-
-.controls button {
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-}
-
-.controls button:hover {
-    background-color: #2563eb;
-}
-
-
-/* --- Responsive Design (Mobile view) --- */
-@media (max-width: 768px) {
-    body {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-    }
-
-    .sidebar-header {
-        padding: 0px;
-    }
-
-    .nav-links {
-        display: flex;
-        justify-content: space-around;
-        padding: 0;
-    }
-
-    .nav-links li a {
-        padding: 8px;
-        flex-direction: column;
-        font-size: 1rem;
-        /* gap: 4px; */
-    }
-
-    .nav-links li a.active {
-        border-left: none;
-        border-bottom: 3px solid #ffffff;
-    }
-
-    .sidebar-footer {
-        display: none; /* Hide logout on mobile to save vertical space */
-    }
-
-    .main-content {
-        margin-left: 0;
-        padding: 20px;
-    }
-
-    /* Adjust the landing block padding slightly so it doesn't crowd mobile screens */
-    .landing {
-        padding: 0px 0px;
-    }
-
-    /* Stack controls vertically on mobile instead of row layout */
-    .controls {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-    }
+/* .profile-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #555;
+} */
+/* When a role button is active, fill its background color */
+.role-btn.active {
+    background-color: #1e1e2f;
+    color: #ffffff;
 }
