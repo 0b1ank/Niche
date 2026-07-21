@@ -24,6 +24,8 @@
     "pg": "^8.22.0"
   },
   "devDependencies": {
+    "ejs-cli": "^2.2.3",
+    "live-server": "^1.2.2",
     "nodemon": "^3.1.14"
   }
 }

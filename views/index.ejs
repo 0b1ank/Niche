@@ -10,10 +10,18 @@
 <body>
 
     <!-- Independent Floating Action Link (Styled like a button) -->
-    <a href="login.html" class="fixed-login-btn">
-        <i class='bx bx-user-circle'></i>
-        <span>Log In</span>
-    </a>
+    <!-- Auth Button (Shows Profile/Logout if logged in, or Login if guest) -->
+    <% if (user) { %>
+        <a href="/logout" class="fixed-login-btn">
+            <i class='bx bx-log-out-circle'></i>
+            <span>Log Out (<%= user.uname || user.username %>)</span>
+        </a>
+    <% } else { %>
+        <a href="/login" class="fixed-login-btn">
+            <i class='bx bx-user-circle'></i>
+            <span>Log In</span>
+        </a>
+    <% } %>
 
     <aside class="sidebar">
         <div class="sidebar-header">
