@@ -1,3 +1,4 @@
+// cafe routes - only owners can add new cafes
 const express = require("express")
 const { client } = require("../config/db")
 const { upload } = require("../config/upload")
@@ -5,13 +6,14 @@ const { ensureAuthenticated, ensureOwner } = require("../middleware/auth")
 
 const router = express.Router()
 
-// GET /cafes/new — owner-only create form
+// show the form to create a new cafe (owners only)
 router.get("/new", ensureAuthenticated, ensureOwner, (req, res) => {
   res.render("create-cafe", { user: req.user })
 })
 
-// POST /cafes — insert cafe owned by the logged-in owner
+// save the new cafe to the database
 router.post("/", ensureAuthenticated, ensureOwner, (req, res, next) => {
+  // handle the optional cafe image upload first
   upload.single("cafe_img")(req, res, (err) => {
     if (err) {
       return res.status(400).render("create-cafe", {
@@ -34,6 +36,7 @@ router.post("/", ensureAuthenticated, ensureOwner, (req, res, next) => {
 
     const cafeImg = req.file ? `/uploads/${req.file.filename}` : null
 
+    // tie this cafe to whoever is logged in as the owner
     await client.query(
       `INSERT INTO cafes
         (owner_id, cname, caddress, ccity, czip, cphonenum, cdescription, cafe_img)

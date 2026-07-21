@@ -9,15 +9,11 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-    <a href="/login" class="fixed-login-btn">
-        <i class='bx bx-user-circle'></i>
-        <span>Log In</span>
-    </a>
 
     <aside class="sidebar">
         <div class="sidebar-header"></div>
         <ul class="nav-links">
-            <li><a href="/index" class="active"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
+            <li><a href="/" class="active"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
             <li><a href="#"><i class="bx bx-book-add"></i> <span>Add</span></a></li>
         </ul>
     </aside>
@@ -28,18 +24,17 @@
             <p>Log in to access your saved Niche Cafes</p>
         </div>
 
-        <%# Dynamic EJS error notification %>
         <% if (typeof error !== "undefined" && error) { %>
             <p style="color: red; text-align: center;"><%= error %></p>
         <% } %>
 
-        <!-- Login Express Form -->
-         <form id="loginForm">
+        <%# email + password login, handled by passport on the server %>
+        <form action="/login" method="POST" id="loginForm">
             <div class="input-group">
-                <label for="username">Username or Email</label>
+                <label for="email">Email</label>
                 <div class="input-wrapper">
                     <i class='bx bx-user'></i>
-                    <input type="text" id="username" placeholder="Enter your username" required>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
                 </div>
             </div>
 
@@ -47,7 +42,7 @@
                 <label for="password">Password</label>
                 <div class="input-wrapper">
                     <i class='bx bx-lock-alt'></i>
-                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
                 </div>
             </div>
 
@@ -56,14 +51,11 @@
 
         <div class="divider">or</div>
 
-        <!-- New Register Routing Endpoint Requested -->
-        <!-- <a href="/register" class="create-account-btn">Create New Account</a> -->
-    
-        <!-- External Auth & Navigation Endpoints -->
-        <div style="text-align: center;">
-            <a href="/auth/google" class="create-account-btn">Continue with Google</a>
+        <%# or sign in with google instead %>
+        <div class="auth-links" style="text-align: center;">
+            <p><a href="/auth/google">Continue with Google</a></p>
             <br>
-            <a href="/register" class="create-account-btn">Create New Account</a>
+            <a href="/register" class="create-account-btn">Need an account? Register</a>
         </div>
     </main>
 </body>

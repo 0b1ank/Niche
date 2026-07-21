@@ -1,4 +1,4 @@
-// Redirect guests to login; call next() if a session user exists
+// block pages that need a logged in user
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next()
@@ -6,7 +6,7 @@ function ensureAuthenticated(req, res, next) {
   res.redirect("/login")
 }
 
-// Only cafe owners may create cafes (owners can still do everything users can)
+// only cafe owners can add cafes, regular users get blocked
 function ensureOwner(req, res, next) {
   if (!req.isAuthenticated()) {
     return res.redirect("/login")

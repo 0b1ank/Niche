@@ -9,10 +9,6 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-    <a href="/login" class="fixed-login-btn">
-        <i class='bx bx-user-circle'></i>
-        <span>Log In</span>
-    </a>
 
     <aside class="sidebar">
         <div class="sidebar-header"></div>
@@ -28,7 +24,7 @@
             <p>Please enter your information</p>
         </div>
 
-        <%# Express POST form with multipart/form-data for image uploads %>
+        <%# register form, needs multipart so we can upload a profile pic %>
         <form action="/register" method="POST" enctype="multipart/form-data" id="newAccountForm">
             <div class="input-group">
                 <label for="username">Username</label>
@@ -57,49 +53,51 @@
 
             <!-- Main Action Control Container -->
             <div class="action-group">
-                <!-- Profile Image Upload Field (Multer field name: pfp) -->
+                <%# hidden file input, the button below triggers it %>
                 <input type="file" id="pfp" name="pfp" accept="image/*" style="display: none;">
 
-                <%# Hidden form input ensuring the chosen role submits to backend %>
+                <div class="upload-row">
+                    <button type="button" class="user-btn upload-btn" id="uploadTriggerBtn">
+                        <i class="bx bx-upload"></i> 
+                        <span>Upload Photo</span>
+                    </button>
+
+                    <div class="avatar-preview-circle" id="avatarPreview">
+                        <i class='bx bx-user'></i>
+                    </div>
+                </div>
+
+                <label>Account Type</label>
+
+                <%# pick owner or user, stored in hidden input for the server %>
                 <input type="hidden" name="role" id="roleInput" value="user">
 
                 <div class="role-row">
-                    <div class="upload-row">
-                        <button type="button" class="user-btn upload-btn" id="uploadTriggerBtn">
-                            <i class="bx bx-upload"></i> 
-                            <span>Upload Photo</span>
-                        </button>
-
-                        <div class="avatar-preview-circle" id="avatarPreview">
-                            <i class='bx bx-user'></i>
-                        </div>
-                    </div>
-
-                    <!-- Account Type Role Selection -->
-                    <label>Account Type</label>
                     <button type="button" class="user-btn role-btn role-btn-owner" id="ownerBtn">
                         <i class='bx bx-briefcase'></i>
                         <span>Owner</span>
                     </button>
-                    <button type="button" class="user-btn role-btn role-btn-user" id="userBtn">
+                    <button type="button" class="user-btn role-btn role-btn-user active" id="userBtn">
                         <i class='bx bx-user'></i>
                         <span>User</span>
                     </button>
                 </div>
-                
-                <!-- <button type="submit" class="submit-btn"><a href="/loggedIn" >Register</a></button> -->
 
-                <a href="/loggedIn" class="submit-btn">Register</a>
-                <a href="/auth/google" class="create-account-btn">Continue with Google</a>
-                <a href="/login" class="create-account-btn">Already have an account? Log in</a>
+                <button type="submit" class="submit-btn">Register</button>
             </div>
         </form>
-        
+
+        <br>
+        <%# or register with google instead %>
+        <div class="auth-links" style="text-align: center;">
+            <p><a href="/auth/google">Continue with Google</a></p>
+            <p><a href="/login">Already have an account? Log in</a></p>
+        </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. File Upload Interaction & Live Preview Logic
+            // click the upload button to open the file picker
             const uploadTriggerBtn = document.getElementById('uploadTriggerBtn');
             const realFileInput = document.getElementById('pfp');
             const avatarPreview = document.getElementById('avatarPreview');
@@ -112,6 +110,7 @@
                 const file = this.files[0];
                 if (file) {
                     const reader = new FileReader();
+                    // show a preview of the chosen photo before submitting
                     reader.onload = function(e) {
                         avatarPreview.innerHTML = `<img src="${e.target.result}" alt="User Profile Preview">`;
                     }
@@ -119,7 +118,7 @@
                 }
             });
 
-            // 2. Role Selector Switcher linked to backend hidden input
+            // toggle between owner and user role buttons
             const userBtn = document.getElementById('userBtn');
             const ownerBtn = document.getElementById('ownerBtn');
             const roleInput = document.getElementById('roleInput');

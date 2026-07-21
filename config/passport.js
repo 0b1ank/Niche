@@ -1,13 +1,9 @@
-// bcrypt for checking the password hash
+// email and password login setup for passport
 const bcrypt = require("bcrypt")
-// passport handles login sessions
 const passport = require("passport")
-// local strategy = email + password login
 const LocalStrategy = require("passport-local").Strategy
-// our postgres client
 const { client } = require("./db")
 
-// set up email/password login
 passport.use(
   new LocalStrategy(
     // the form field is called email not username so tell passport that

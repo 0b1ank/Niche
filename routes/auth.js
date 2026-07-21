@@ -1,9 +1,11 @@
+// google sign-in flow: redirect to google, come back with a code, create or link the user
 const express = require("express")
 const passport = require("../config/passport")
 const { client } = require("../config/db")
 
 const router = express.Router()
 
+// read google oauth settings from .env
 function googleConfig() {
   const clientID = (process.env.GOOGLE_CLIENT_ID || "").trim()
   const clientSecret = (process.env.GOOGLE_CLIENT_SECRET || "").trim()
@@ -19,7 +21,7 @@ function googleEnabled() {
   return Boolean(clientID && clientSecret)
 }
 
-// Look up / link / stage a Google profile (same rules as before)
+// figure out what to do with someone who just signed in with google
 async function handleGoogleProfile(req, profile) {
   const googleId = profile.id
   const email = profile.email
@@ -31,7 +33,7 @@ async function handleGoogleProfile(req, profile) {
     throw new Error("Google account did not provide an email")
   }
 
-  // 1) Already linked
+  // already signed up with google before
   const byGoogle = await client.query(
     `SELECT uid, uname, uemail, pfp, urole, google_id
      FROM users WHERE google_id = $1`,
@@ -41,7 +43,7 @@ async function handleGoogleProfile(req, profile) {
     return { user: byGoogle.rows[0] }
   }
 
-  // 2) Same email already exists -> link Google id
+  // same email exists from normal signup, just link google to that account
   const byEmail = await client.query(
     `SELECT uid, uname, uemail, pfp, urole, google_id
      FROM users WHERE uemail = $1`,
@@ -57,7 +59,7 @@ async function handleGoogleProfile(req, profile) {
     return { user: linked.rows[0] }
   }
 
-  // 3) New user → finish-signup asks for role
+  // brand new person, save their google info in session and ask for username + role
   req.session.pendingGoogle = {
     googleId,
     email,
@@ -70,7 +72,7 @@ async function handleGoogleProfile(req, profile) {
   return { user: null, pending: true }
 }
 
-// Step 1: send browser to Google
+// kick off google login by sending them to google's login page
 router.get("/google", (req, res) => {
   if (!googleEnabled()) {
     return res.status(503).send(
@@ -89,8 +91,7 @@ router.get("/google", (req, res) => {
   res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`)
 })
 
-// Step 2: Google redirects here with ?code=...
-// Uses Node's fetch (not the flaky passport-oauth token helper)
+// google sends the user back here with a code we trade for their profile
 router.get("/google/callback", async (req, res, next) => {
   if (!googleEnabled()) {
     return res.redirect("/login")
@@ -105,7 +106,7 @@ router.get("/google/callback", async (req, res, next) => {
 
     const { clientID, clientSecret, callbackURL } = googleConfig()
 
-    // Exchange authorization code for access token
+    // swap the code for an access token
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -124,7 +125,7 @@ router.get("/google/callback", async (req, res, next) => {
       return res.redirect("/login")
     }
 
-    // Fetch the Google user profile
+    // use the token to get name, email, and photo
     const profileRes = await fetch(
       "https://www.googleapis.com/oauth2/v2/userinfo",
       { headers: { Authorization: `Bearer ${tokenData.access_token}` } }
@@ -152,7 +153,7 @@ router.get("/google/callback", async (req, res, next) => {
   }
 })
 
-// Step 3a: show short form — username + owner/user role
+// new google users pick a username and whether they are an owner or regular user
 router.get("/finish-signup", (req, res) => {
   const pending = req.session.pendingGoogle
   if (!pending) {
@@ -166,7 +167,7 @@ router.get("/finish-signup", (req, res) => {
   })
 })
 
-// Step 3b: create the user row, then log them in
+// save the new google user to the db and log them in
 router.post("/finish-signup", async (req, res, next) => {
   const pending = req.session.pendingGoogle
   if (!pending) {
