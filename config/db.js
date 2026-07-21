@@ -1,14 +1,11 @@
-//Purpose: Opens the connection portal to the database
-
+// connects to postgres using the url from .env
 const{ Client } = require("pg")
 
-//Builds the connection object 
 const client = new Client({
-    //connectionString helps pass the information into the correct fields
-    connectionString: process.env.DATABASE_URL //dotenv puts DATABASE_URL and PORT on process.env,
+    connectionString: process.env.DATABASE_URL
 })
 
-//opens TCP/socket connection to Postgres
+// open the connection when the app starts
 client
     .connect()
     .then(()=> console.log("connected to pg"))

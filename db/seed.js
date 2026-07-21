@@ -1,10 +1,5 @@
-/**
- * Seed the database with owners, cafes, and sample posts.
- * Usage: node db/seed.js
- *
- * Safe to re-run: skips cafes that already exist by name+city,
- * and upserts seed users by email.
- */
+// fills the database with sample users, cafes, and reviews
+// run with: node db/seed.js
 require("dotenv").config()
 const bcrypt = require("bcrypt")
 const { Client } = require("pg")
@@ -34,7 +29,7 @@ const CAFE_IMAGES = [
   "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800",
 ]
 
-// ownerKey indexes into SEED_USERS (owner roles only: 0-3)
+// ownerKey points to which seed user owns this cafe (0-3 are owners)
 const CAFES = [
   // Riverside / Inland Empire
   {
@@ -590,6 +585,7 @@ const REVIEW_SNIPPETS = [
   "Single-origin pour-over had amazing florals.",
 ]
 
+// create user if they dont exist yet, otherwise just return their id
 async function upsertUser(client, user, passwordHash) {
   const existing = await client.query(
     "SELECT uid, urole FROM users WHERE uemail = $1",
@@ -630,13 +626,14 @@ async function seed() {
     const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10)
     const userIds = []
 
+    // create all the seed users first
     for (const user of SEED_USERS) {
       const uid = await upsertUser(client, user, passwordHash)
       userIds.push(uid)
       console.log(`User ready: ${user.uname} (uid=${uid}, ${user.urole})`)
     }
 
-    // Also reuse any existing owners in the DB so their accounts get cafes too
+    // also grab any owners already in the db so cafes get assigned properly
     const existingOwners = await client.query(
       "SELECT uid FROM users WHERE urole = 'owner' ORDER BY uid"
     )
@@ -648,6 +645,7 @@ async function seed() {
     let skippedCafes = 0
     const cafeIds = []
 
+    // add cafes one by one, skip if that name+city already exists
     for (let i = 0; i < CAFES.length; i++) {
       const cafe = CAFES[i]
       const existingId = await cafeExists(client, cafe.cname, cafe.ccity)
@@ -680,7 +678,7 @@ async function seed() {
       insertedCafes++
     }
 
-    // Add sample reviews/posts if none exist yet
+    // add sample review posts if the posts table is empty
     const postCount = await client.query("SELECT COUNT(*)::int AS n FROM posts")
     let insertedPosts = 0
 

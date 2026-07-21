@@ -9,43 +9,40 @@
 </head>
 <body>
 
-    <!-- Independent Floating Action Link (Styled like a button) -->
-    <!-- Auth Button (Shows Profile/Logout if logged in, or Login if guest) -->
-    <% if (user) { %>
-        <a href="/logout" class="fixed-login-btn">
-            <i class='bx bx-log-out-circle'></i>
-            <span>Log Out (<%= user.uname || user.username %>)</span>
-        </a>
-    <% } else { %>
-        <a href="/login" class="fixed-login-btn">
-            <i class='bx bx-user-circle'></i>
-            <span>Log In</span>
-        </a>
-    <% } %>
-
     <aside class="sidebar">
         <div class="sidebar-header">
         </div>
         <ul class="nav-links">
-            <li><a href="/" class="active"><i class='bx bx-home-alt-2'></i> <span></span></a></li>
+            <li><a href="/" class="active"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
             <% if (user && user.urole === 'owner') { %>
-            <li><a href="/cafes/new"><i class="bx bx-book-add"></i> <span></span></a></li>
+            <%# only owners see the add cafe link %>
+            <li><a href="/cafes/new"><i class="bx bx-book-add"></i> <span>Add Cafe</span></a></li>
             <% } %>
         </ul>
-        
+
+        <div class="sidebar-footer">
+            <% if (user) { %>
+            <a href="/logout">
+                <i class='bx bx-log-out-circle'></i>
+                <span>Log Out (<%= user.uname %>)</span>
+            </a>
+            <% } else { %>
+            <a href="/login">
+                <i class='bx bx-user-circle'></i>
+                <span>Log In</span>
+            </a>
+            <% } %>
+        </div>
     </aside>
 
     <main class="main-content">
-        <!-- Add the login button with a Boxicon user icon -->
-    
         <div class="landing">
-            <!-- Add the login button with a Boxicon user icon -->
-            
             <header class="top-header">
                 <h1>Niche Cafes</h1>
             </header>
 
             <div class="controls">
+                <%# city dropdown is built from whatever cities are in the cafe list %>
                 <label for="city">City:</label>
                 <select id="city">
                     <option value="all">All cities</option>
@@ -66,9 +63,10 @@
     </main>
 
     <script>
+        // fallback image if a cafe has no photo
         const DEFAULT_IMG = 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400';
 
-        // Cafe rows from Postgres (passed by server.js)
+        // all cafes loaded from the server, used for filtering by city
         const ALL_CAFES = <%- JSON.stringify(
           (cafes || []).map(function (cafe) {
             return {
@@ -79,8 +77,9 @@
               imageUrl: cafe.cafe_img || null,
             };
           })
-        ) %>;
+        ) -%>;
 
+        // stop user text from breaking the html
         function escapeHtml(text) {
             return String(text)
                 .replace(/&/g, '&amp;')
@@ -89,6 +88,7 @@
                 .replace(/"/g, '&quot;');
         }
 
+        // build and show cafe cards on the page
         function renderCafes(cafesToDisplay) {
             const container = document.getElementById('cafesContainer');
             container.innerHTML = '';
@@ -118,6 +118,7 @@
             });
         }
 
+        // filter cafes by the city dropdown and re-render
         function handleSearch() {
             const selectedCity = document.getElementById('city').value;
             const filteredList = selectedCity === 'all'
@@ -126,14 +127,9 @@
             renderCafes(filteredList);
         }
 
+        // show all cafes when the page first loads
         document.addEventListener('DOMContentLoaded', () => {
             renderCafes(ALL_CAFES);
-
-            const addCafeButton = document.getElementById('addCafeBtn');
-            if (addCafeButton) {
-                const isOwner = <%- JSON.stringify(!!(user && user.urole === 'owner')) %>;
-                addCafeButton.style.display = isOwner ? 'block' : 'none';
-            }
         });
 
         document.getElementById('fetchBtn').addEventListener('click', handleSearch);
