@@ -69,20 +69,18 @@ router.get("/", async (req, res) => {
         const result = await client.query(
             `SELECT
                 posts.pid,
-                posts.image
-                posts.pid,
                 posts.image,
                 posts.description,
                 posts.rating,
-                users.uid
+                users.uid,
                 users.uname,
                 users.pfp,
-                cafes.cid
+                cafes.cid,
                 cafes.cname
             FROM posts
             JOIN users
                 ON posts.user_id = users.uid
-            JOIN users 
+            JOIN cafes
                 ON posts.cafe_id = cafes.cid
             ORDER BY posts.pid DESC`
         )
