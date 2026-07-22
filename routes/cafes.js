@@ -8,7 +8,7 @@ const router = express.Router()
 
 // show the form to create a new cafe (owners only)
 router.get("/new", ensureAuthenticated, ensureOwner, (req, res) => {
-  res.render("create-cafe", { user: req.user })
+  res.render("createPost", { user: req.user })
 })
 
 // save the new cafe to the database

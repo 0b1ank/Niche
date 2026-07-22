@@ -39,7 +39,9 @@ router.post(
                 )
             } 
 
-            const imagePath = req.file ? `/uploads/$(req.file.filename)` : null
+            // const imagePath = req.file ? `/uploads/$(req.file.filename)` : null
+           
+            const imagePath = req.file ? `/uploads/${req.file.filename}` : null
 
             await client.query(
                 `INSERT INTO posts
@@ -53,7 +55,7 @@ router.post(
                     numericRating,
                 ]
             )
-            res.redirect("/")
+            res.redirect("/profile")
         } catch (err) {
             console.error("create review post failed:", err.message)
             res.status(500).send("Couldn't create the review post.")
