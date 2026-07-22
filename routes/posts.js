@@ -4,6 +4,8 @@ const { upload } = require("../config/upload")
 const { ensureAuthenticated } = require("../middleware/auth")
 
 const router = express.Router()
+// special feature
+const { getUserLevel } = require('../utils/userLevel');
 
 // Post to /posts/review
 router.post(
@@ -95,7 +97,40 @@ router.get("/", async (req, res) => {
     }
 })
 
-// Show the user profile (with both posts and owned cafes)
+// // Show the user profile (with both posts and owned cafes)
+// router.get("/profile", ensureAuthenticated, async (req, res) => {
+//     try {
+//         const userId = req.user.uid;
+
+//         // 1. Fetch user's posts
+//         const postsResult = await client.query(
+//             `SELECT posts.*, cafes.cname 
+//              FROM posts 
+//              JOIN cafes ON posts.cafe_id = cafes.cid 
+//              WHERE posts.user_id = $1 
+//              ORDER BY posts.pid DESC`,
+//             [userId]
+//         );
+
+//         // 2. Fetch cafes owned by this user
+//         const cafesResult = await client.query(
+//             `SELECT * FROM cafes WHERE owner_id = $1`,
+//             [userId]
+//         );
+
+//         // 3. Pass both userPosts and userCafes to profile.ejs
+//         res.render("profile", {
+//             user: req.user,
+//             userPosts: postsResult.rows,
+//             userCafes: cafesResult.rows
+//         });
+//     } catch (err) {
+//         console.error("failed to load profile:", err.message);
+//         res.status(500).send("Could not load profile.");
+//     }
+// });
+
+// Show the user profile (with posts, owned cafes, and dynamic level badge)
 router.get("/profile", ensureAuthenticated, async (req, res) => {
     try {
         const userId = req.user.uid;
@@ -116,11 +151,16 @@ router.get("/profile", ensureAuthenticated, async (req, res) => {
             [userId]
         );
 
-        // 3. Pass both userPosts and userCafes to profile.ejs
+        // 3. Calculate level badge based on total review post count
+        const postCount = postsResult.rows.length;
+        const userBadge = getUserLevel(postCount);
+
+        // 4. Pass userPosts, userCafes, and userBadge to profile.ejs
         res.render("profile", {
             user: req.user,
             userPosts: postsResult.rows,
-            userCafes: cafesResult.rows
+            userCafes: cafesResult.rows,
+            userBadge: userBadge
         });
     } catch (err) {
         console.error("failed to load profile:", err.message);

@@ -5,6 +5,9 @@ require("dotenv").config()
 const dns = require("dns")
 dns.setDefaultResultOrder("ipv4first")
 
+//special feature
+const { getUserLevel } = require("./utils/userLevel");
+
 const express = require("express")
 const path = require("path")
 const bcrypt = require("bcrypt")
@@ -182,22 +185,15 @@ app.post("/register", (req, res, next) => {
     }
 })
 
-
 app.get("/profile", ensureAuthenticated, async (req, res) => {
     try {
-        // 1. Fetch user posts
+        // 1. Fetch user's posts
         const postsResult = await client.query(
-            `SELECT
-                p.pid AS id,
-                c.cname AS title,
-                c.ccity AS city,
-                p.image AS "imageUrl",
-                p.description,
-                p.rating
-            FROM posts p
-            JOIN cafes c ON p.cafe_id = c.cid
-            WHERE p.user_id = $1
-            ORDER BY p.pid DESC`,
+            `SELECT p.*, c.cname 
+             FROM posts p 
+             JOIN cafes c ON p.cafe_id = c.cid 
+             WHERE p.user_id = $1 
+             ORDER BY p.pid DESC`,
             [req.user.uid]
         );
 
@@ -207,13 +203,17 @@ app.get("/profile", ensureAuthenticated, async (req, res) => {
             [req.user.uid]
         );
 
-        // 3. Render profile template and pass both results in the object
+        // 3. Calculate level badge
+        const postCount = postsResult.rows.length;
+        const userBadge = getUserLevel(postCount);
+
+        // 4. Render profile template
         res.render("profile", {
             user: req.user,
             userPosts: postsResult.rows,
-            userCafes: cafesResult.rows   // <-- Must be inside res.render({ ... })
+            userCafes: cafesResult.rows,
+            userBadge: userBadge
         });
-
     } catch (err) {
         console.error("failed to load profile:", err.message);
         res.status(500).send("Could not load profile.");
