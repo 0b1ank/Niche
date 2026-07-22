@@ -6,8 +6,10 @@
 
         <title>Community Feed</title>
 
-        <link rel="stylesheet" href="/public/style.css">
-        <link rel="stylesheet" href="/public/feedStyle.css">
+        <link rel="stylesheet" href="/style.css">
+        <link rel="stylesheet" href="/feedStyle.css">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     </head>
     <body>
@@ -16,11 +18,11 @@
         <%# nav links for the community feed section %>
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>Niche - Cafe Share</h2>
+                <h2>Niche</h2>
             </div>
 
             <ul class="nav-links">
-                <li><a href="/" class="active"><i class="fa-solid fa-mug-hot"></i> <span>Cafes</span></a></li>
+                <li><a href="/"><i class="fa-solid fa-mug-hot"></i> <span>Cafes</span></a></li>
                 <li><a href="/posts" class="active"><i class="fa-solid fa-images"></i> <span>Community</span></a></li>
                 <li><a href="/create-post"><i class="fa-solid fa-plus"></i> <span>Create</span></a></li>
                 <li><a href="/profile"><i class="fa-solid fa-user"></i> <span>Profile</span></a></li>
@@ -69,137 +71,60 @@
         <!--Post feed-->
         <%# sample posts for now, will come from the database later %>
         <section class="feed">
-            <!-- Post 1 -->
-            <article class="cafe-card card">
-
-                <div class="post-header">
-
-                    <img
-                        src="https://placehold.co/100x100?text=User"
-                        alt="Profile picture"
-                        class="profile-image"
-                    >
-
-                    <div class="post-user-info">
-                        <h3>jessa.coffee</h3>
-                        <p>Reviewed Lift Coffee · 2 hours ago</p>
-                    </div>
-
+            <% if(!posts || posts.length === 0) { %>
+                <div class="card">
+                    <p>No reviews have been posted yet.</p>
                 </div>
+            <% } else { %>
 
-                <a href="/posts/1" class="post-image-link">
+                <% posts.forEach(post) => { %>
+                    <article class="cafe-card card">
+                        <div class="post-header">
+                            <img
+                                src="<%= post.pfp || 'https://placehold.co/100x100?text=User' %>"
+                                alt="<%= post.uname %>'s profile picture"
+                                class="profile-image"
+                            >
 
-                    <img
-                        src="https://placehold.co/900x500?text=Lift+Coffee"
-                        alt="Coffee and pastry at Lift Coffee"
-                        class="cafe-image"
-                    >
+                            <div class="post-user-info">
+                                <h3><%= post.uname %></h3>
+                                <p>Reviewed <%= post.cname %></p>
+                            </div>
 
-                </a>
+                        </div>
+                        <a href="/posts/<%= post.pid %>" class="post-image-link">
+                            <img
+                                src="<%= post.image || 'https://placehold.co/900x500?text=Cafe+Review' %>"
+                                alt="Review photo for <%= post.cname %>"
+                                class="cafe-image"
+                            >
+                        </a>
 
-                <div class="cafe-details">
+                        <div class="cafe-details">
+                            <h2><%= post.cname %></h2>
+                            
+                            <div class="rating-row">
+                                <span class="stars">
+                                    <%= "★".repeat(post.rating) %> <%= "☆".repeat(5 - post.rating) %>
+                                </span>
 
-                    <h2>Lift Coffee</h2>
+                                <span class="rating-text">
+                                    <%= post.rating %> out of 5
+                                </span>
+                            </div>
 
-                    <div class="rating-row">
-                        <span class="stars">★★★★☆</span>
-                        <span class="rating-text">4 out of 5</span>
-                    </div>
+                            <p class="post-caption">
+                                <%= post.description %>
+                            </p>
 
-                    <p class="post-caption">
-                        The coffee was really good and there was plenty of
-                        seating. It was a little crowded, but I would
-                        definitely come back to study here.
-                    </p>
-
-                    <div class="post-stats">
-
-                        <span>
-                            <i class="fa-regular fa-heart"></i>
-                            24 likes
-                        </span>
-
-                        <span>
-                            <i class="fa-regular fa-comment"></i>
-                            6 comments
-                        </span>
-
-                    </div>
-
-                    <a href="/posts/1" class="view-post-link">
-                        View full post
-                    </a>
-
-                </div>
-
-            </article>
-
-            <!-- Post 2 -->
-            <article class="cafe-card card">
-
-                <div class="post-header">
-
-                    <img
-                        src="https://placehold.co/100x100?text=User"
-                        alt="Profile picture"
-                        class="profile-image"
-                    >
-
-                    <div class="post-user-info">
-                        <h3>larryexplores</h3>
-                        <p>Reviewed Stray Dog Coffee · 5 hours ago</p>
-                    </div>
-
-                </div>
-
-                <a href="/posts/2" class="post-image-link">
-
-                    <img
-                        src="https://placehold.co/900x500?text=Stray+Dog+Coffee"
-                        alt="Interior of Stray Dog Coffee"
-                        class="cafe-image"
-                    >
-
-                </a>
-
-                <div class="cafe-details">
-
-                    <h2>Stray Dog Coffee</h2>
-
-                    <div class="rating-row">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-text">5 out of 5</span>
-                    </div>
-
-                    <p class="post-caption">
-                        Great atmosphere, friendly staff, and one of the best
-                        iced lattes I have had recently.
-                    </p>
-
-                    <div class="post-stats">
-
-                        <span>
-                            <i class="fa-regular fa-heart"></i>
-                            41 likes
-                        </span>
-
-                        <span>
-                            <i class="fa-regular fa-comment"></i>
-                            12 comments
-                        </span>
-
-                    </div>
-
-                    <a href="/posts/2" class="view-post-link">
-                        View full post
-                    </a>
-
-                </div>
-
-            </article>
-
+                            <a href="/post/<% post.pid  %>" class="view-post-link">
+                                View full post
+                            </a>
+                        </div>
+                    </article>
+                <% } %>
+            <% } %>
         </section>
-        
     </main>
     </body>
 </html>
