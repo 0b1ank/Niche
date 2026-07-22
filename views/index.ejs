@@ -6,15 +6,27 @@
     <title>Niche Cafes</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
 </head>
 <body>
+    <% if (user) { %>
+        <a href="/profile" class="fixed-login-btn">
+        <i class='bx bx-user-circle'></i>
+        </a>
+    <% } %>
 
     <aside class="sidebar">
         <div class="sidebar-header">
         </div>
         <ul class="nav-links">
-            <li><a href="#" class="active"><i class='bx bx-home-alt-2'></i> <span></span></a></li>
-            <li><a href="/create-post"><i class="bx bx-book-add"></i> <span></span></a></li>
+            <li><a href="#" class="active"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
+            <%# Show Create Post icon ONLY if user is logged in %>
+            <% if (user) { %>
+
+                <li><a href="/create-post"><i class="bx bx-book-add"></i> <span>Add</span></a></li>
+                <li><a href="#"><i class='bx bx-list-ul'></i> <span>Community</span></a></li>
+            <% } %>
+            <!-- <li><a href="/create-post"><i class="bx bx-book-add"></i> <span></span></a></li> -->
             <!-- <li><a href="#"><i class='bx bx-chat'></i> <span>Profile</span></a></li> -->
             <!-- <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li> -->
         </ul>

@@ -12,10 +12,29 @@
         <div class="sidebar-header">
         </div>
         <ul class="nav-links">
-            <li><a href="/" class="active"><i class='bx bx-home-alt-2'></i> <span></span></a></li>
-            <li><a href="#"><i class="bx bx-book-add"></i> <span></span></a></li>
-            <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li>
-        </ul>
+                <li><a href="/"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
+                
+                <li><a href="/create-post"><i class="bx bx-book-add"></i> <span>Add</span></a></li>
+                <li><a href="/posts" ><i class='bx bx-list-ul'></i> <span>Community</span></a></li>
+                
+                <!-- <li><a href="/create-post"><i class="bx bx-book-add"></i> <span></span></a></li> -->
+                <!-- <li><a href="#"><i class='bx bx-chat'></i> <span>Profile</span></a></li> -->
+                <!-- <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li> -->
+            </ul>
+
+            <div class="sidebar-footer">
+                <% if (user) { %>
+                <a href="/logout">
+                    <i class='bx bx-log-out-circle'></i>
+                    <span>Log Out (<%= user.uname %>)</span>
+                </a>
+                <% } else { %>
+                <a href="/login">
+                    <i class='bx bx-user-circle'></i>
+                    <span>Log In</span>
+                </a>
+                <% } %>
+            </div>
     </aside>
 
 <main class="main-content">
@@ -42,12 +61,7 @@
 
     <hr class="divider">
 
-    <div class="profile-actions">
-        <% if (user.urole === "owner") { %>
-            <a href="/cafes/new" class="btn primary-btn"><i class='bx bx-plus'></i> Add New Cafe</a>
-        <% } %>
-        <a href="/logout" class="btn danger-btn"><i class='bx bx-log-out'></i> Log Out</a>
-    </div>
+   
 </main>
 </body>
 </html>
