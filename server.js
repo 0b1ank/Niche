@@ -15,6 +15,7 @@ const { client } = require("./config/db")
 const { ensureAuthenticated } = require("./middleware/auth")
 const cafesRouter = require("./routes/cafes")
 const authRouter = require("./routes/auth")
+const postsRouter = require("./routes/posts")
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -43,6 +44,8 @@ app.set("view engine", "ejs")
 app.use("/auth", authRouter)
 // owners create cafes through /cafes
 app.use("/cafes", cafesRouter)
+// users create review posts through /posts
+app.use("/posts", postsRouter)
 
 // Home page: loads cafes from Postgres and renders them (accessible to everyone)
 app.get("/", async (req, res) => {
@@ -66,11 +69,23 @@ app.get("/", async (req, res) => {
 })
 
 //Create Post page
-app.get("/create-post", (req, res) => {
-    res.render("createPost", {
-        user: req.user || null,
-    })
-})
+app.get("/create-post", ensureAuthenticated, async (req, res) => {
+    try {
+        const result = await client.query(
+            `Select cid, cname 
+            FROM cafes
+            ORDER BY cname ASC`
+        )
+
+        res.render("createPost", {
+            user: req.user,
+            cafes: result.rows,
+        });
+    } catch (err) {
+        console.error("failed to load create post page:", err.message)
+        res.status(500).send("Could not load the create post page.")
+    }
+});
 
 // show the login page
 app.get("/login", (req, res) => {

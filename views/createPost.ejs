@@ -83,13 +83,15 @@
                             Cafe Name:
                         </label>
 
-                        <input
-                            type="text"
-                            id="reviewCafeName"
-                            name="cafeName"
-                            placeholder="Enter the cafe name"
-                            required
-                        >
+                        <select id="reviewCafeId" name="cafeId" required>
+                            <option value=""> Select a Cafe</option>
+
+                            <% cafes.forEach(cafe => { %>
+                                <option value="<%= cafe.cid%>">
+                                    <%= cafe.cname%>
+                                </option>
+                            <% }) %>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -106,7 +108,7 @@
                         ></textarea>
                     </div>
 
-                    <div class="fomr-group">
+                    <div class="form-group">
                         <label for="reviewImage">
                             Upload a photo:
                         </label>
@@ -116,7 +118,7 @@
                                 type="file"
                                 id="reviewImage"
                                 name="image"
-                                accept="image/"
+                                accept="image/*"
                                 required
                             >
 

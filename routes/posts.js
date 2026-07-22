@@ -1,0 +1,64 @@
+const express = require("express")
+const { client } = require("../config/db")
+const { upload } = require("../config/upload")
+const { ensureAuthenticated } = require("../middleware/auth")
+
+const router = express.Router()
+
+// Post to /posts/review
+router.post(
+    "/review",
+    ensureAuthenticated,
+    (req, res, next) => {
+        upload.single("image")(req, res, (err) => {
+            if (err) {
+                return res.status(400).send(err.message)
+            }
+
+            next()
+        })
+    },
+    async (req, res) => {
+        try {
+            const { cafeId, description, rating } = req.body
+
+            if (!cafeId || !description || !rating) {
+                return res.status(400).send("Cafe, description, and rating are required.")
+            }
+
+            const numericCafeId = Number(cafeId)
+            const numericRating = Number(rating)
+
+            if (!Number.isInteger(numericCafeId)) {
+                return res.status(400).send("Invalid cafe.")
+            }
+
+            if (!Number.isInteger(numericRating) || numericRating < 1 || numericRating > 5) {
+                return res.status(400).send(
+                    "Rating must be between 1 and 5."
+                )
+            } 
+
+            const imagePath = req.file ? `/uploads/$(req.file.filename)` : null
+
+            await client.query(
+                `INSERT INTO posts
+                    (cafe_id, user_id, image, description, rating)
+                VALUES($1, $2, $3, $4, $5)`,
+                [
+                    numericCafeId,
+                    req.user.uid,
+                    imagePath,
+                    description.trim(),
+                    numericRating,
+                ]
+            )
+            res.redirect("/")
+        } catch (err) {
+            console.error("create review post failed:", err.message)
+            res.status(500).send("Couldn't create the review post.")
+        }
+    }
+)
+
+module.exports = router
