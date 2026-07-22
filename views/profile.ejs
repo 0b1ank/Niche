@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= user.uname %>'s Profile - Niche Cafes</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/profile.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
@@ -61,7 +62,37 @@
 
     <hr class="divider">
 
-   
+    <!-- Main Content Area (under profile header) -->
+    <section class="profile-body">
+        
+        <!-- Shared Posts Section -->
+        <h2 class="section-title">Shared Posts</h2>
+        
+        <div class="posts-grid">
+            <% if (userPosts && userPosts.length > 0) { %>
+                <% userPosts.forEach(function(post) { %>
+                    <div class="post-card">
+                        <img 
+                            src="<%= post.imageUrl.startsWith('/') || post.imageUrl.startsWith('http') ? post.imageUrl : '/' + post.imageUrl %>" 
+                            alt="<%= post.title %>" 
+                            class="post-img"
+                        >
+                        <div class="post-info">
+                            <h3><%= post.title %></h3>
+                            <p class="post-city"><%= post.city %></p>
+                            <p><%=post.rating %><i class="bx bx-star"></i></p>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p class="no-posts">No shared posts yet.</p>
+            <% } %>
+        </div>
+
+    </section>
 </main>
+
+
+
 </body>
 </html>
