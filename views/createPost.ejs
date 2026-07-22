@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width-device-width, initial scale=1.0">
+
+        <title>Create Post</title>
+        
+        <!--CSS styling-->
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="createPostStyle.css">
+
+        <!--Icons-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    </head>
+    <body>
+
+        <!--Sidebar-->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Niche - Cafe Share</h2>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="/" class="active"><i class="fa-solid fa-mug-hot"></i> <span>Cafes</span></a></li>
+                <li><a href="/posts" class="active"><i class="fa-solid fa-images"></i> <span>Community</span></a></li>
+                <li><a href="/create-post"><i class="fa-solid fa-plus"></i> <span>Create</span></a></li>
+                <li><a href="/profile"><i class="fa-solid fa-user"></i> <span>Profile</span></a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="/logout"><i class="fa-solid fa-right-from-backet"></i> <span>Logout</span></a>
+            </div>
+
+        </aside>
+
+        <!--Main content-->
+        <main class="main-content">
+            <header class="top-header">
+                <h1>Create a Post</h1>
+                <p>
+                    Add a cafe business or share your personal cafe experience.
+                </p>
+            </header>
+
+            <!--Switch between form types -->
+            <section class="form-switch card">
+                <button
+                    type="button"
+                    class="form-tab active"
+                    id="reviewTab"
+                >
+                    <i class="fa-solid fa-star"></i>
+                    Cafe Review
+                </button>
+
+                <button 
+                    type="button"
+                    class="form-tab"
+                    id="ownerTab"
+                >
+                    <i class="fa-solid fa-store"></i>
+                    Cafe Owner
+                </button>
+            </section>
+
+            <!--Review form-->
+            <section class="create-form-card card" id="reviewFormContainer">
+                <div class="form-heading">
+                    <h2>Create a Cafe Review</h2>
+                    <p>Share your cafe experience!</p>
+                </div>
+
+                <form
+                    action="/posts/review"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="create-form"
+                >
+
+                    <div class="form-group">
+                        <label for="reviewCafeName">
+                            Cafe Name:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="reviewCafeName"
+                            name="cafeName"
+                            placeholder="Enter the cafe name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewDescription">
+                            Review:
+                        </label>
+
+                        <textarea
+                            id="reviewDescription"
+                            name="description"
+                            rows="5"
+                            placeholder="Describe your experience, what you ordered, etc..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="fomr-group">
+                        <label for="reviewImage">
+                            Upload a photo:
+                        </label>
+
+                        <div class="upload-area">
+                            <input 
+                                type="file"
+                                id="reviewImage"
+                                name="image"
+                                accept="image/"
+                                required
+                            >
+
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                            <p>Choose a photo from your device</p>
+                            <span>JPG, PNG, or WEBP</span>
+                        </div>
+
+                        <img 
+                            id="reviewImagePreview"
+                            class="image-preview"
+                            alt="Selected review image preview"
+                        >
+                    </div>
+
+                    <fieldset class="form-group rating-fieldset">
+                        <legend>Your Rating:</legend>
+
+                        <div class="star-rating">
+                            <input
+                                type="radio"
+                                id="reviewStar5"
+                                name="rating"
+                                value="5"
+                                required
+                            >
+                            <label for="reviewStar5" title="5 stars">
+                                5★
+                            </label>
+
+                            <input
+                                type="radio"
+                                id="reviewStar4"
+                                name="rating"
+                                value="4"
+                            >
+                            <label for="reviewStar4" title="4 stars">
+                                4★
+                            </label>
+
+                            <input
+                                type="radio"
+                                id="reviewStar3"
+                                name="rating"
+                                value="3"
+                            >
+                            <label for="reviewStar3" title="3 stars">
+                                3★
+                            </label>
+
+                            <input
+                                type="radio"
+                                id="reviewStar2"
+                                name="rating"
+                                value="2"
+                            >
+                            <label for="reviewStar2" title="2 stars">
+                                2★
+                            </label>
+
+                            <input
+                                type="radio"
+                                id="reviewStar1"
+                                name="rating"
+                                value="1"
+                            >
+                            <label for="reviewStar1" title="1 stars">
+                                1★
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="submit-button">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        Create Review Post
+                    </button>
+                </form>
+            </section>
+
+            <!--Cafe-owner form-->
+            <section
+                class="create-form-card card hidden"
+                id="ownerFormContainer"
+            >
+                <div class="form-heading">
+                    <h2>Add Your Cafe</h2>
+                    <p>Create a listing for your cafe business.</p>
+                </div>
+
+                <form
+                    action="/posts/cafe"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="create-form"
+                >
+                    <div class="form-group">
+                        <label for="ownerCafeName">
+                            Cafe Name:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="ownerCafeName"
+                            name="cafeName"
+                            placeholder="Enter your cafe name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">
+                            Street Address:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="address"
+                            name="address"
+                            placeholder="Street Address goes here"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">
+                                City:
+                            </label>
+
+                            <input 
+                                type="text"
+                                id="city"
+                                name="city"
+                                placeholder="xyz city"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="state">
+                                State:
+                            </label>
+
+                            <input
+                                type="text"
+                                id="state"
+                                name="state"
+                                placeholder="CA"
+                                maxlength="2"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="zipCode">
+                                ZIP code:
+                            </label>
+
+                            <input
+                                type="text"
+                                id="zipCode"
+                                name="zipCode"
+                                placeholder="90001"
+                                required
+                            >
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phoneNumber">
+                            Phone Number:
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            placeholder="(555) 123-4567"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ownerDescription">
+                            Cafe Description:
+                        </label>
+
+                        <textarea
+                            id="ownerDescription"
+                            name="description"
+                            rows="6"
+                            placeholder="Describe cafe, menu, atmosphere, store hours etc..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ownerImage">
+                            Upload a Cafe Photo (ie. Storefront)
+                        </label>
+
+                        <div class="upload-area">
+                            <input 
+                                type="file"
+                                id="ownerImage"
+                                name="image"
+                                accept="image/*"
+                                required
+                            >
+
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                            <p>Choose a photo of your cafe</p>
+
+                            <span>JPG, PNG, or WEBP</span>
+
+                        </div>
+
+                        <img
+                            id="ownerImagePreview"
+                            class="image-preview"
+                            alt="Selected cafe image preview"
+                        >
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        <i class="fa-solid fa-store"></i>
+                        Create Cafe Listing
+                    </button>
+                </form>
+            </section>
+        </main>
+
+        <script>
+            const reviewTab = document.getElementById("reviewTab");
+            const ownerTab = document.getElementById("ownerTab");
+
+            const reviewFormContainer = document.getElementById("reviewFormContainer");
+
+            const ownerFormContainer = document.getElementById("ownerFormContainer");
+
+            reviewTab.addEventListener("click", () => {
+                reviewFormContainer.classList.remove("hidden");
+                ownerFormContainer.classList.add("hidden");
+
+                reviewTab.classList.add("active");
+                ownerTab.classList.remove("active");
+            });
+
+            ownerTab.addEventListener("click", () => {
+                ownerFormContainer.classList.remove("hidden");
+                reviewFormContainer.classList.add("hidden");
+
+                ownerTab.classList.add("active");
+                reviewTab.classList.remove("active");
+            });
+
+            function createImagePreview(inputId, previewId) {
+                const imageInput = document.getElementById(inputId);
+                const imagePreview = document.getElementById(previewId);
+
+                imageInput.addEventListener("change", () => {
+                    const selectedFile = imageInput.files[0];
+
+                    if(!selectedFile) {
+                        imagePreview.removeAttribute("src");
+                        imagePreview.classList.remove("visible");
+                        return;
+                    }
+
+                    imagePreview.src = URL.createObjectURL(selectedFile);
+                    imagePreview.classList.add("visible");
+                });
+            }
+
+            createImagePreview(
+                "reviewImage", "reviewImagePreview"
+            );
+
+            createImagePreview(
+                "ownerImage", "ownerImagePreview"
+            );
+        </script>
+
+    </body>
+</html>

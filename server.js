@@ -65,6 +65,13 @@ app.get("/", async (req, res) => {
     }
 })
 
+//Create Post page
+app.get("/create-post", (req, res) => {
+    res.render("createPost", {
+        user: req.user || null,
+    })
+})
+
 // show the login page
 app.get("/login", (req, res) => {
     // if theyre already logged in just send them home
