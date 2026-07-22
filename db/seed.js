@@ -585,6 +585,85 @@ const REVIEW_SNIPPETS = [
   "Single-origin pour-over had amazing florals.",
 ]
 
+// tags used for content-based recommendations
+const SEED_TAGS = [
+  "wifi",
+  "study",
+  "patio",
+  "matcha",
+  "quiet",
+  "roastery",
+  "pastries",
+  "brunch",
+  "cold-brew",
+  "laptop-friendly",
+  "live-music",
+  "beach",
+]
+
+// keyword hints in cafe name/description → tag names (2–4 tags applied per cafe)
+const TAG_HINTS = [
+  { tag: "wifi", words: ["wifi", "wi-fi", "laptop", "remote", "outlets", "study"] },
+  { tag: "study", words: ["study", "student", "quiet", "laptop", "campus", "ucr", "uci"] },
+  { tag: "patio", words: ["patio", "outdoor", "porch", "seating"] },
+  { tag: "matcha", words: ["matcha"] },
+  { tag: "quiet", words: ["quiet", "minimalist", "sleek", "study"] },
+  { tag: "roastery", words: ["roast", "roaster", "single-origin", "specialty", "lab"] },
+  { tag: "pastries", words: ["pastry", "pastries", "bakery", "croissant", "cake", "scone", "doughnut"] },
+  { tag: "brunch", words: ["brunch", "breakfast", "toast", "avocado"] },
+  { tag: "cold-brew", words: ["cold brew", "nitro", "iced"] },
+  { tag: "laptop-friendly", words: ["laptop", "remote", "wifi", "outlets", "workers"] },
+  { tag: "live-music", words: ["live music", "open mic", "music nights"] },
+  { tag: "beach", words: ["beach", "surf", "ocean", "coastal", "pier", "venice"] },
+]
+
+function tagsForCafe(cafe) {
+  const text = `${cafe.cname} ${cafe.cdescription}`.toLowerCase()
+  const matched = []
+  for (const hint of TAG_HINTS) {
+    if (hint.words.some((w) => text.includes(w))) {
+      matched.push(hint.tag)
+    }
+  }
+  // always give at least a couple of tags so similarity has something to work with
+  const fallback = ["roastery", "wifi", "pastries", "quiet"]
+  let i = 0
+  while (matched.length < 2 && i < fallback.length) {
+    if (!matched.includes(fallback[i])) matched.push(fallback[i])
+    i++
+  }
+  return matched.slice(0, 4)
+}
+
+// ensure recommendation tables exist even if DB was created before schema.sql was updated
+async function ensureRecTables(client) {
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS tags (
+      tid   SERIAL PRIMARY KEY,
+      tname TEXT UNIQUE NOT NULL
+    )
+  `)
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS cafe_tags (
+      cafe_id INTEGER NOT NULL REFERENCES cafes(cid) ON DELETE CASCADE,
+      tag_id  INTEGER NOT NULL REFERENCES tags(tid) ON DELETE CASCADE,
+      PRIMARY KEY (cafe_id, tag_id)
+    )
+  `)
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS favorites (
+      user_id INTEGER NOT NULL REFERENCES users(uid) ON DELETE CASCADE,
+      cafe_id INTEGER NOT NULL REFERENCES cafes(cid) ON DELETE CASCADE,
+      PRIMARY KEY (user_id, cafe_id)
+    )
+  `)
+  // optional column for ranking by recent taste; ignore if already present
+  await client.query(`
+    ALTER TABLE posts
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  `)
+}
+
 // create user if they dont exist yet, otherwise just return their id
 async function upsertUser(client, user, passwordHash) {
   const existing = await client.query(
@@ -622,6 +701,9 @@ async function seed() {
 
   try {
     await client.query("BEGIN")
+
+    // create tags / cafe_tags / favorites if this DB predates the schema update
+    await ensureRecTables(client)
 
     const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10)
     const userIds = []
@@ -678,6 +760,37 @@ async function seed() {
       insertedCafes++
     }
 
+    // upsert tag catalog
+    const tagIdByName = {}
+    for (const tname of SEED_TAGS) {
+      const tagResult = await client.query(
+        `INSERT INTO tags (tname) VALUES ($1)
+         ON CONFLICT (tname) DO UPDATE SET tname = EXCLUDED.tname
+         RETURNING tid, tname`,
+        [tname]
+      )
+      tagIdByName[tagResult.rows[0].tname] = tagResult.rows[0].tid
+    }
+    console.log(`Tags ready: ${SEED_TAGS.length}`)
+
+    // attach 2–4 tags to every seed cafe (idempotent)
+    let linkedTags = 0
+    for (let i = 0; i < CAFES.length; i++) {
+      const cid = cafeIds[i]
+      if (!cid) continue
+      const tagNames = tagsForCafe(CAFES[i])
+      for (const tname of tagNames) {
+        const tid = tagIdByName[tname]
+        if (!tid) continue
+        const link = await client.query(
+          `INSERT INTO cafe_tags (cafe_id, tag_id) VALUES ($1, $2)
+           ON CONFLICT DO NOTHING`,
+          [cid, tid]
+        )
+        linkedTags += link.rowCount
+      }
+    }
+
     // add sample review posts if the posts table is empty
     const postCount = await client.query("SELECT COUNT(*)::int AS n FROM posts")
     let insertedPosts = 0
@@ -712,20 +825,50 @@ async function seed() {
       }
     }
 
+    // sample favorites for reviewer seed users (maya / jordan / sam)
+    let insertedFavorites = 0
+    const favoritePairs = [
+      [4, 0],  // maya → The Arcade Coffee Roasters
+      [4, 1],  // maya → Condron Coffee
+      [4, 9],  // maya → Hidden Grounds Riverside
+      [5, 18], // jordan → Maru Coffee
+      [5, 26], // jordan → Cafe Dulce Little Tokyo
+      [5, 1],  // jordan → Condron Coffee
+      [6, 37], // sam → Bru Coffeehouse
+      [6, 9],  // sam → Hidden Grounds Riverside
+      [6, 41], // sam → Local Coffee Claremont
+    ]
+    for (const [userIdx, cafeIdx] of favoritePairs) {
+      const uid = userIds[userIdx]
+      const cid = cafeIds[cafeIdx]
+      if (!uid || !cid) continue
+      const fav = await client.query(
+        `INSERT INTO favorites (user_id, cafe_id) VALUES ($1, $2)
+         ON CONFLICT DO NOTHING`,
+        [uid, cid]
+      )
+      insertedFavorites += fav.rowCount
+    }
+
     await client.query("COMMIT")
 
     const totals = await client.query(`
       SELECT
         (SELECT COUNT(*)::int FROM users) AS users,
         (SELECT COUNT(*)::int FROM cafes) AS cafes,
-        (SELECT COUNT(*)::int FROM posts) AS posts
+        (SELECT COUNT(*)::int FROM posts) AS posts,
+        (SELECT COUNT(*)::int FROM tags) AS tags,
+        (SELECT COUNT(*)::int FROM cafe_tags) AS cafe_tags,
+        (SELECT COUNT(*)::int FROM favorites) AS favorites
     `)
 
     console.log("\nSeed complete.")
     console.log(`  Cafes inserted: ${insertedCafes} (skipped existing: ${skippedCafes})`)
     console.log(`  Posts inserted: ${insertedPosts}`)
+    console.log(`  Cafe-tag links added: ${linkedTags}`)
+    console.log(`  Favorites inserted: ${insertedFavorites}`)
     console.log(
-      `  Totals → users: ${totals.rows[0].users}, cafes: ${totals.rows[0].cafes}, posts: ${totals.rows[0].posts}`
+      `  Totals → users: ${totals.rows[0].users}, cafes: ${totals.rows[0].cafes}, posts: ${totals.rows[0].posts}, tags: ${totals.rows[0].tags}, cafe_tags: ${totals.rows[0].cafe_tags}, favorites: ${totals.rows[0].favorites}`
     )
     console.log(`\nSeed logins (password: ${DEFAULT_PASSWORD}):`)
     for (const u of SEED_USERS) {

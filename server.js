@@ -16,6 +16,8 @@ const { ensureAuthenticated } = require("./middleware/auth")
 const cafesRouter = require("./routes/cafes")
 const authRouter = require("./routes/auth")
 const postsRouter = require("./routes/posts")
+// ranks cafes for the home page based on the user's taste (or popularity for guests)
+const { rankForUser } = require("./services/recommend")
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -49,20 +51,32 @@ app.use("/cafes", cafesRouter)
 // users create review posts through /posts
 app.use("/posts", postsRouter)
 
-// Home page: loads cafes from Postgres and renders them (accessible to everyone)
+// Home page: shows recommended cafes (accessible to everyone)
+// logged in users get a list ranked by their ratings/favorites/tags
+// guests get a popularity-based ranking instead
 app.get("/", async (req, res) => {
     try {
-        // 1) Ask Postgres for every cafe (newest first).
-        const result = await client.query(
-            `SELECT cid, cname, ccity, cdescription, cafe_img
-             FROM cafes
-             ORDER BY cid DESC`
-        )
+        // optional city filter from the url, ex: /?city=Riverside
+        // if it's missing, rankForUser looks at every cafe
+        const city =
+            req.query.city && req.query.city !== "all"
+                ? req.query.city
+                : null
 
-        // 2) Send data into the EJS template.
+        // rankForUser mixes content + collaborative + personal scores
+        // req.user is set by passport when someone is logged in
+        // if nobody is logged in, pass null so it falls back to popularity
+        const cafes = await rankForUser(req.user ? req.user.uid : null, {
+            city,
+            limit: 50,
+        })
+
+        // send the ranked list into index.ejs
+        // the template still lets people filter by city in the browser too
         res.render("index", {
             user: req.user || null,
-            cafes: result.rows,
+            cafes,
+            selectedCity: city || "all",
         })
     } catch (err) {
         console.error("failed to load home cafes:", err.message)

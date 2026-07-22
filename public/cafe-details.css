@@ -1,0 +1,191 @@
+/* cafe detail page layout */
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #725a37;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.cafe-hero {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.cafe-hero-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.cafe-hero-info h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.cafe-meta {
+    color: #6b7280;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cafe-rating {
+    margin: 12px 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cafe-rating .bx-star {
+    color: #d97706;
+}
+
+.review-count {
+    color: #6b7280;
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+.cafe-description {
+    margin-top: 12px;
+    line-height: 1.5;
+    color: #374151;
+}
+
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.tag-chip {
+    background: #f3eee6;
+    color: #5b4630;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.tag-chip.small {
+    font-size: 0.72rem;
+    padding: 3px 8px;
+}
+
+.cafe-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.section-title {
+    font-size: 1.35rem;
+    color: #333;
+}
+
+.section-subtitle {
+    color: #6b7280;
+    margin-top: -4px;
+    margin-bottom: 4px;
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.review-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 600;
+}
+
+.review-stars .bx-star {
+    color: #d97706;
+}
+
+.review-img {
+    margin-top: 10px;
+    max-width: 180px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.similar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.similar-card {
+    text-decoration: none;
+    color: inherit;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.similar-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.similar-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    display: block;
+}
+
+.similar-info {
+    padding: 14px;
+}
+
+.similar-info h3 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.similar-city {
+    color: #6b7280;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+
+.empty-note {
+    color: #6b7280;
+    padding: 8px 0;
+}
+
+@media (max-width: 768px) {
+    .cafe-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .cafe-hero-img {
+        height: 180px;
+    }
+}

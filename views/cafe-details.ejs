@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= cafe.cname || "Cafe" %> - Niche Cafes</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/cafe-details.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+    <% if (user) { %>
+        <a href="/profile" class="fixed-login-btn">
+            <i class='bx bx-user-circle'></i>
+        </a>
+    <% } %>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+        </div>
+        <ul class="nav-links">
+            <li><a href="/"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
+            <% if (user) { %>
+                <li><a href="/create-post"><i class="bx bx-book-add"></i> <span>Add</span></a></li>
+                <li><a href="/posts"><i class='bx bx-list-ul'></i> <span>Community</span></a></li>
+            <% } %>
+        </ul>
+
+        <div class="sidebar-footer">
+            <% if (user) { %>
+            <a href="/logout">
+                <i class='bx bx-log-out-circle'></i>
+                <span>Log Out (<%= user.uname %>)</span>
+            </a>
+            <% } else { %>
+            <a href="/login">
+                <i class='bx bx-user-circle'></i>
+                <span>Log In</span>
+            </a>
+            <% } %>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <%# back link so people can get home easily %>
+        <a href="/" class="back-link"><i class='bx bx-arrow-back'></i> Back to cafes</a>
+
+        <%# main cafe info at the top %>
+        <section class="cafe-hero card">
+            <% 
+              // seed cafes use full unsplash urls; uploads start with /
+              const heroImg = cafe.cafe_img || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800";
+            %>
+            <img
+                class="cafe-hero-img"
+                src="<%= heroImg %>"
+                alt="<%= cafe.cname || 'Cafe' %>"
+            >
+
+            <div class="cafe-hero-info">
+                <h1><%= cafe.cname || "Untitled cafe" %></h1>
+
+                <p class="cafe-meta">
+                    <i class='bx bx-map'></i>
+                    <%= cafe.ccity || "Unknown city" %><% if (cafe.caddress) { %> · <%= cafe.caddress %><% } %>
+                    <% if (cafe.czip) { %> <%= cafe.czip %><% } %>
+                </p>
+
+                <% if (cafe.cphonenum) { %>
+                <p class="cafe-meta">
+                    <i class='bx bx-phone'></i> <%= cafe.cphonenum %>
+                </p>
+                <% } %>
+
+                <p class="cafe-rating">
+                    <i class='bx bx-star'></i>
+                    <%= cafe.avg_rating.toFixed(1) %>
+                    <span class="review-count">(<%= cafe.review_count %> review<%= cafe.review_count === 1 ? "" : "s" %>)</span>
+                </p>
+
+                <% if (tags && tags.length) { %>
+                <div class="tag-row">
+                    <% tags.forEach(function(tag) { %>
+                        <span class="tag-chip"><%= tag %></span>
+                    <% }) %>
+                </div>
+                <% } %>
+
+                <% if (cafe.cdescription) { %>
+                <p class="cafe-description"><%= cafe.cdescription %></p>
+                <% } %>
+            </div>
+        </section>
+
+        <%# reviews for this cafe %>
+        <section class="cafe-section">
+            <h2 class="section-title">Reviews</h2>
+
+            <% if (reviews && reviews.length) { %>
+                <div class="reviews-list">
+                    <% reviews.forEach(function(review) { %>
+                        <article class="card review-card">
+                            <div class="review-header">
+                                <strong><%= review.uname %></strong>
+                                <span class="review-stars">
+                                    <%= review.rating %><i class='bx bx-star'></i>
+                                </span>
+                            </div>
+                            <p><%= review.description %></p>
+                            <% if (review.image) { %>
+                                <img
+                                    class="review-img"
+                                    src="<%= review.image %>"
+                                    alt="Review photo"
+                                >
+                            <% } %>
+                        </article>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="empty-note">No reviews yet. Be the first to post one!</p>
+            <% } %>
+        </section>
+
+        <%# similar cafes from the recommendation system %>
+        <section class="cafe-section">
+            <h2 class="section-title">Similar cafes</h2>
+            <p class="section-subtitle">Based on location, tags, and what other people liked.</p>
+
+            <% if (similar && similar.length) { %>
+                <div class="similar-grid">
+                    <% similar.forEach(function(s) { %>
+                        <a href="/cafes/<%= s.cid %>" class="card similar-card">
+                            <% 
+                              const similarImg = s.cafe_img || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400";
+                            %>
+                            <img
+                                src="<%= similarImg %>"
+                                alt="<%= s.cname || 'Cafe' %>"
+                                class="similar-img"
+                            >
+                            <div class="similar-info">
+                                <h3><%= s.cname || "Untitled cafe" %></h3>
+                                <p class="similar-city"><%= s.ccity || "Unknown" %></p>
+                                <% if (s.tags && s.tags.length) { %>
+                                <div class="tag-row">
+                                    <% s.tags.slice(0, 3).forEach(function(tag) { %>
+                                        <span class="tag-chip small"><%= tag %></span>
+                                    <% }) %>
+                                </div>
+                                <% } %>
+                            </div>
+                        </a>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="empty-note">No similar cafes found yet.</p>
+            <% } %>
+        </section>
+    </main>
+</body>
+</html>

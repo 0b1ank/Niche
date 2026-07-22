@@ -70,6 +70,7 @@
         </div>
 
         <div class="alert-banner"><h3>Recommended Cafes</h3></div>
+        <%# these cafes come from rankForUser in server.js — order is personalized when logged in %>
         <div id="cafesContainer"></div>
     </main>
 
@@ -77,7 +78,8 @@
         // fallback image if a cafe has no photo
         const DEFAULT_IMG = 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400';
 
-        // all cafes loaded from the server, used for filtering by city
+        // cafes are already ranked by the recommendation system on the server
+        // we keep the full list here so the city dropdown can filter without another request
         const ALL_CAFES = <%- JSON.stringify(
           (cafes || []).map(function (cafe) {
             return {
@@ -89,6 +91,9 @@
             };
           })
         ) -%>;
+
+        // which city was selected on the server (from /?city=...), if any
+        const SELECTED_CITY = <%- JSON.stringify(typeof selectedCity !== "undefined" ? selectedCity : "all") -%>;
 
         // stop user text from breaking the html
         function escapeHtml(text) {
@@ -110,9 +115,16 @@
             }
 
             cafesToDisplay.forEach((cafe) => {
+                // wrap each card in a link so clicking opens the cafe detail page
+                const link = document.createElement('a');
+                link.href = `/cafes/${cafe.id}`;
+                link.style.textDecoration = 'none';
+                link.style.color = 'inherit';
+                link.style.display = 'block';
+                link.style.marginBottom = '20px';
+
                 const cafeDiv = document.createElement('div');
                 cafeDiv.className = 'card cafe-card';
-                cafeDiv.style.marginBottom = '20px';
 
                 const imageUrl = cafe.imageUrl || DEFAULT_IMG;
 
@@ -125,11 +137,14 @@
                     <img src="${escapeHtml(imageUrl)}" width="150" style="border-radius: 4px; object-fit: cover; height: 100px;" alt="${escapeHtml(cafe.title)}">
                 `;
 
-                container.appendChild(cafeDiv);
+                link.appendChild(cafeDiv);
+                container.appendChild(link);
             });
         }
 
         // filter cafes by the city dropdown and re-render
+        // note: this only filters the already-ranked list in the browser
+        // the ranking itself was decided by rankForUser on the server
         function handleSearch() {
             const selectedCity = document.getElementById('city').value;
             const filteredList = selectedCity === 'all'
@@ -138,9 +153,14 @@
             renderCafes(filteredList);
         }
 
-        // show all cafes when the page first loads
+        // show the ranked cafes when the page first loads
+        // if the server already filtered by city, start on that option
         document.addEventListener('DOMContentLoaded', () => {
-            renderCafes(ALL_CAFES);
+            const citySelect = document.getElementById('city');
+            if (SELECTED_CITY && SELECTED_CITY !== 'all') {
+                citySelect.value = SELECTED_CITY;
+            }
+            handleSearch();
         });
 
         document.getElementById('fetchBtn').addEventListener('click', handleSearch);
