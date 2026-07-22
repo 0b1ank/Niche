@@ -52,6 +52,15 @@
             <p class="user-email">
                 <i class='bx bx-envelope'></i> <%= user.uemail %>
             </p>
+            
+            <!-- Dynamic Level Badge -->
+            <% if (typeof userBadge !== 'undefined' && userBadge) { %>
+            <div class="level-badge <%= userBadge.badgeClass %>">
+                <span class="badge-level-number">Lvl <%= userBadge.level %></span>
+                <span class="badge-title"><%= userBadge.title %></span>
+            </div>
+            <% } %>
+
             <span class="role-badge <%= user.urole %>">
                 <i class='bx <%= user.urole === "owner" ? "bx-store-alt" : "bx-user" %>'></i>
                 <%= user.urole.toUpperCase() %>
@@ -64,14 +73,14 @@
     <!-- Main Content Area (under profile header) -->
     <section class="profile-body">
         
-        <!-- Your Cafe -->
+        <!-- Your Cafe Section (Only shows for Cafe Owners) -->
+        <% if (userCafes && userCafes.length > 0) { %>
         <h2 class="section-title">Your Cafe</h2>
 
-        <% if (userCafes && userCafes.length > 0) { %>
         <% userCafes.forEach(function(cafe) { %>
             <div class="post-card-owner">
             <img src="<%= cafe.cafe_img %>" alt="<%= cafe.cname %>" class="post-img-owner">
-            
+
             <div class="post-info-owner">
                 <h2><%= cafe.cname %></h2>
                 <p><%= cafe.caddress %>, <%= cafe.ccity %>, <%= cafe.czip %></p>
@@ -80,8 +89,6 @@
             </div>
             </div>
         <% }); %>
-        <% } else { %>
-        <p class="no-posts">No cafes registered to this account yet.</p>
         <% } %>
 
         <!-- Shared Posts Section -->
@@ -91,9 +98,9 @@
             <% if (userPosts && userPosts.length > 0) { %>
                 <% userPosts.forEach(function(post) { %>
                     <div class="post-card">
-                        <img 
-                            src="<%= post.imageUrl.startsWith('/') || post.imageUrl.startsWith('http') ? post.imageUrl : '/' + post.imageUrl %>" 
-                            alt="<%= post.title %>" 
+                       <img 
+                            src="<%= post.image ? post.image : '/images/default-cafe.jpg' %>" 
+                            alt="<%= post.cname %>" 
                             class="post-img"
                         >
                         <div class="post-info">
