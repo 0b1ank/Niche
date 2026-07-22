@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Niche Cafes - Login</title>
-    <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="style.css">
+    <!-- Swap order so login.css overrides base style.css -->
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link rel="stylesheet" type="text/css" href="/login.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
@@ -19,43 +20,43 @@
     </aside>
 
     <main class="main-content">
-        <div class="login-header">
-            <h2>Welcome Back</h2>
-            <p>Log in to access your saved Niche Cafes</p>
-        </div>
-
-        <% if (typeof error !== "undefined" && error) { %>
-            <p style="color: red; text-align: center;"><%= error %></p>
-        <% } %>
-
-        <%# email + password login, handled by passport on the server %>
-        <form action="/login" method="POST" id="loginForm">
-            <div class="input-group">
-                <label for="email">Email</label>
-                <div class="input-wrapper">
-                    <i class='bx bx-user'></i>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                </div>
+        <div class="login-container">
+            <div class="login-header">
+                <h2>Welcome Back</h2>
+                <p>Log in to access your saved Niche Cafes</p>
             </div>
 
-            <div class="input-group">
-                <label for="password">Password</label>
-                <div class="input-wrapper">
-                    <i class='bx bx-lock-alt'></i>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <% if (typeof error !== "undefined" && error) { %>
+                <p style="color: red; text-align: center;"><%= error %></p>
+            <% } %>
+
+            <form action="/login" method="POST" id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <i class='bx bx-user'></i>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
                 </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class='bx bx-lock-alt'></i>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Sign In</button>
+            </form>
+
+            <div class="divider">or</div>
+
+            <div class="auth-links">
+                <a href="/auth/google" class="google-btn"><i class='bx bxl-google'></i> Continue with Google</a>
+                <br><br>
+                <a href="/register" class="create-account-btn">Need an account? Register</a>
             </div>
-
-            <button type="submit" class="submit-btn">Sign In</button>
-        </form>
-
-        <div class="divider">or</div>
-
-        <%# or sign in with google instead %>
-        <div class="auth-links" style="text-align: center;">
-            <p><a href="/auth/google">Continue with Google</a></p>
-            <br>
-            <a href="/register" class="create-account-btn">Need an account? Register</a>
         </div>
     </main>
 </body>
