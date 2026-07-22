@@ -261,3 +261,72 @@ body {
         width: 100%;
     }
 }
+
+/* Container lays out Avatar (left) and User Info (right) horizontally */
+.avatar-container {
+    display: flex;
+    align-items: center; /* Vertically aligns image and text stack */
+    gap: 24px;          /* Space between avatar and text details */
+    margin-bottom: 20px;
+}
+
+/* Fixed size so the picture doesn't blow up or warp */
+.profile-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #725a37;
+    flex-shrink: 0;     /* Prevents avatar from shrinking */
+}
+
+.default-avatar {
+    font-size: 110px;
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+/* User Info column stacks Name -> Email -> Badge vertically */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligns text neatly to the left edge */
+    gap: 6px;
+}
+
+.user-info h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    color: #333333;
+}
+
+.user-email {
+    color: #6b7280;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+}
+
+/* Badge self-sizes to its text length */
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.role-badge.owner {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.role-badge.user {
+    background-color: #e0f2fe;
+    color: #075985;
+}
