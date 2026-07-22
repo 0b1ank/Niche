@@ -151,6 +151,27 @@ app.post("/register", (req, res, next) => {
     }
 })
 
+// GET /profile - renders profile for the logged in user
+app.get("/profile", ensureAuthenticated, async (req, res) => {
+    try {
+        // Query Postgres for fresh user data using req.user.id (or req.user.uid)
+        const result = await client.query(
+            `SELECT uid, uname, uemail, pfp, urole FROM users WHERE uid = $1`,
+            [req.user.uid]
+        )
+
+        const currentUser = result.rows[0]
+
+        // Render profile.ejs and pass user object
+        res.render("profile", {
+            user: currentUser
+        })
+    } catch (err) {
+        console.error("Failed to fetch profile:", err.message)
+        res.status(500).send("Server error loading profile.")
+    }
+})
+
 app.get("/db-check", async (req, res) => {
     try {
         const result = await client.query("SELECT NOW() AS now")

@@ -3,181 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Niche Cafes</title>
-    <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="style.css">
+    <title><%= user.uname %>'s Profile - Niche Cafes</title>
+    <link rel="stylesheet" href="/style.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-    <%# profile page mockup, not hooked up to the server yet %>
     <aside class="sidebar">
         <div class="sidebar-header">
         </div>
         <ul class="nav-links">
-            <li><a href="index.ejs" class="active"><i class='bx bx-home-alt-2'></i> <span></span></a></li>
+            <li><a href="/" class="active"><i class='bx bx-home-alt-2'></i> <span></span></a></li>
             <li><a href="#"><i class="bx bx-book-add"></i> <span></span></a></li>
-            <!-- <li><a href="#"><i class='bx bx-chat'></i> <span>Profile</span></a></li> -->
             <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li>
         </ul>
-        
     </aside>
 
-    <main class="main-content">
-        <!-- <div class="login-header"> -->
-            <h2>Profile</h2>
-            <div class="profile-wrapper">
-                <div class="avatar-profile" id="avatarPreview">
-                    <i class='bx bx-user'></i>
-                </div>
+<main class="main-content">
+    <div class="avatar-container">
+        <!-- 1. Profile Picture / Avatar on the left -->
+        <% if (user.pfp) { %>
+            <img src="<%= user.pfp %>" alt="Profile Picture" class="profile-img">
+        <% } else { %>
+            <i class='bx bx-user-circle default-avatar'></i>
+        <% } %>
 
-                <div class="profile-group">
-                    <h3 for="username"><strong>Username: </strong></h3>
-                    <div>
-                        <p> mockUsername</p>
-                    </div>
-                </div>
+        <!-- 2. Text Stack on the right -->
+        <div class="user-info">
+            <h2><%= user.uname %></h2>
+            <p class="user-email">
+                <i class='bx bx-envelope'></i> <%= user.uemail %>
+            </p>
+            <span class="role-badge <%= user.urole %>">
+                <i class='bx <%= user.urole === "owner" ? "bx-store-alt" : "bx-user" %>'></i>
+                <%= user.urole.toUpperCase() %>
+            </span>
+        </div>
+    </div>
 
-                <div class="profile-group">
-                    <h3 for="username">Email: </h3>
-                    <div>
-                        <p> mockEmail</p>
-                    </div>
-                </div>
-            </div>
-            
+    <hr class="divider">
 
-        <!-- New Account Processing Form Matrix -->
-        <form id="newAccountForm">
-            <div class="input-group">
-                <label for="username">Username:</label>
-                <div class="input-wrapper">
-                    <i class='bx bx-user'></i>
-                    <!-- <input type="text" id="username" placeholder="Enter your username" required> -->
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="username">Email:</label>
-                <div class="input-wrapper">
-                    <i class='bx bx-user'></i>
-                    <!-- <input type="text" id="email" placeholder="Enter your email" required> -->
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="password">Password:</label>
-                <div class="input-wrapper">
-                    <i class='bx bx-lock-alt'></i>
-                    <!-- <input type="password" id="password" placeholder="Enter your password" required> -->
-                </div>
-            </div>
-            <br/>
-
-            <!-- Main Action Control Container -->
-            <div class="action-group">
-                
-                <!-- Primary Stacked Button (Top) -->
-                <input type="file" id="realFileInput" accept="image/*" style="display: none;">
-    
-                <!-- Container holding the button and its new preview friend side-by-side
-                <div class="upload-row">
-                    
-                    
-                </div> -->
-                
-                <!-- Secondary Role Selection Row (Bottom) -->
-                <label for="password">Account Type</label>
-                <div class="role-row">
-                    <a href="#" class="user-btn role-btn role-btn-owner">
-                        <i class='bx bx-briefcase'></i>
-                        <span>Owner</span>
-                    </a>
-                    <a href="#" class="user-btn role-btn role-btn-user active">
-                        <i class='bx bx-user'></i>
-                        <span>User</span>
-                    </a>
-                    
-                </div>
-                <a href="index.html" class="submit-btn">Log Out</a>
-            </div>
-
-        </form>
-
-    </main>
-
-    <script>
-        // placeholder script for testing the profile ui
-        document.getElementById('newAccountForm').addEventListener('newAccount', (e) => {
-            e.preventDefault(); // Stop page from refreshing on form submit
-            
-            const user = document.getElementById('username').value;
-            console.log("Authenticating user session:", user);
-            
-            // For now, redirect straight back to your dashboard page on submission
-            window.location.href = "index.html"; 
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const uploadTriggerBtn = document.getElementById('uploadTriggerBtn');
-            const realFileInput = document.getElementById('realFileInput');
-            const avatarPreview = document.getElementById('avatarPreview');
-
-            // open file picker when upload button is clicked
-            uploadTriggerBtn.addEventListener('click', () => {
-                realFileInput.click();
-            });
-
-            // show preview of selected photo
-            realFileInput.addEventListener('change', function() {
-                const file = this.files[0];
-
-                if (file) {
-                    const reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        avatarPreview.innerHTML = `<img src="${e.target.result}" alt="User Profile Preview">`;
-                    }
-
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-
-        // track which role button is selected
-        let chosenRole = 'user'; 
-
-        const userBtn = document.querySelector('.role-btn-user');
-        const ownerBtn = document.querySelector('.role-btn-owner');
-
-        userBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            
-            chosenRole = 'user';
-            
-            userBtn.classList.add('active');
-            ownerBtn.classList.remove('active');
-        });
-
-        ownerBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            
-            chosenRole = 'owner';
-            
-            ownerBtn.classList.add('active');
-            userBtn.classList.remove('active');
-        });
-
-        // example of how role would get sent on register
-        function registerAccount() {
-            const registrationData = {
-                username: document.getElementById('username').value,
-                roleId: chosenRole
-            };
-
-            console.log("Submitting account payload to database:", registrationData);
-        }
-
-    </script>
-
+    <div class="profile-actions">
+        <% if (user.urole === "owner") { %>
+            <a href="/cafes/new" class="btn primary-btn"><i class='bx bx-plus'></i> Add New Cafe</a>
+        <% } %>
+        <a href="/logout" class="btn danger-btn"><i class='bx bx-log-out'></i> Log Out</a>
+    </div>
+</main>
 </body>
 </html>
