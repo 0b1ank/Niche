@@ -20,8 +20,6 @@ CREATE TABLE cafes (
   cafe_img     TEXT
 );
 
-
-
 CREATE TABLE posts (
   pid         SERIAL PRIMARY KEY,
   cafe_id     INTEGER NOT NULL,
