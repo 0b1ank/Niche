@@ -182,66 +182,41 @@ app.post("/register", (req, res, next) => {
     }
 })
 
-// // GET /profile - renders profile for the logged in user
-// app.get("/profile", ensureAuthenticated, async (req, res) => {
-//     try {
-//         // Query Postgres for fresh user data using req.user.id (or req.user.uid)
-//         const result = await client.query(
-//             `SELECT uid, uname, uemail, pfp, urole FROM users WHERE uid = $1`,
-//             [req.user.uid]
-//         )
 
-//         const currentUser = result.rows[0]
-
-//         // Render profile.ejs and pass user object
-//         res.render("profile", {
-//             user: currentUser
-//         })
-//     } catch (err) {
-//         console.error("Failed to fetch profile:", err.message)
-//         res.status(500).send("Server error loading profile.")
-//     }
-// })
-
-// GET /profile - renders profile for the logged in user
 app.get("/profile", ensureAuthenticated, async (req, res) => {
     try {
-        // 1. Fetch fresh user data
-        const userResult = await client.query(
-            `SELECT uid, uname, uemail, pfp, urole FROM users WHERE uid = $1`,
-            [req.user.uid]
-        );
-
-        const currentUser = userResult.rows[0];
-
-        // 2. Fetch all posts created by this user
-        // Note: Change 'cafes' and 'user_id' if your table or column names are different!
+        // 1. Fetch user posts
         const postsResult = await client.query(
-            `SELECT 
-                p.pid AS id, 
-                c.cname AS title, 
-                c.ccity AS city, 
-                p.image AS "imageUrl", 
-                p.description, 
+            `SELECT
+                p.pid AS id,
+                c.cname AS title,
+                c.ccity AS city,
+                p.image AS "imageUrl",
+                p.description,
                 p.rating
-             FROM posts p
-             JOIN cafes c ON p.cafe_id = c.cid
-             WHERE p.user_id = $1
-             ORDER BY p.pid DESC`,
+            FROM posts p
+            JOIN cafes c ON p.cafe_id = c.cid
+            WHERE p.user_id = $1
+            ORDER BY p.pid DESC`,
             [req.user.uid]
         );
 
-        const userPosts = postsResult.rows;
+        // 2. Fetch owned cafes
+        const cafesResult = await client.query(
+            `SELECT * FROM cafes WHERE owner_id = $1`,
+            [req.user.uid]
+        );
 
-        // 3. Render profile.ejs and pass both user & userPosts
+        // 3. Render profile template and pass both results in the object
         res.render("profile", {
-            user: currentUser,
-            userPosts: userPosts
+            user: req.user,
+            userPosts: postsResult.rows,
+            userCafes: cafesResult.rows   // <-- Must be inside res.render({ ... })
         });
 
     } catch (err) {
-        console.error("Failed to fetch profile:", err.message);
-        res.status(500).send("Server error loading profile.");
+        console.error("failed to load profile:", err.message);
+        res.status(500).send("Could not load profile.");
     }
 });
 

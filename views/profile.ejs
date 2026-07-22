@@ -7,35 +7,34 @@
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/profile.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
 </head>
 <body>
     <aside class="sidebar">
         <div class="sidebar-header">
         </div>
         <ul class="nav-links">
-                <li><a href="/"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
-                
-                <li><a href="/create-post"><i class="bx bx-book-add"></i> <span>Add</span></a></li>
-                <li><a href="/posts" ><i class='bx bx-list-ul'></i> <span>Community</span></a></li>
-                
-                <!-- <li><a href="/create-post"><i class="bx bx-book-add"></i> <span></span></a></li> -->
-                <!-- <li><a href="#"><i class='bx bx-chat'></i> <span>Profile</span></a></li> -->
-                <!-- <li><a href="#"><i class='bx bx-list-ul'></i><span></span></a></li> -->
-            </ul>
+            <li><a href="/"><i class='bx bx-home-alt-2'></i> <span>Home</span></a></li>
+            
+            <li><a href="/create-post"><i class="bx bx-book-add"></i> <span>Add</span></a></li>
+            <li><a href="/posts" ><i class='bx bx-list-ul'></i> <span>Community</span></a></li>
+            
+        </ul>
 
-            <div class="sidebar-footer">
-                <% if (user) { %>
-                <a href="/logout">
-                    <i class='bx bx-log-out-circle'></i>
-                    <span>Log Out (<%= user.uname %>)</span>
-                </a>
-                <% } else { %>
-                <a href="/login">
-                    <i class='bx bx-user-circle'></i>
-                    <span>Log In</span>
-                </a>
-                <% } %>
-            </div>
+        <div class="sidebar-footer">
+            <% if (user) { %>
+            <a href="/logout">
+                <i class='bx bx-log-out-circle'></i>
+                <span>Log Out (<%= user.uname %>)</span>
+            </a>
+            <% } else { %>
+            <a href="/login">
+                <i class='bx bx-user-circle'></i>
+                <span>Log In</span>
+            </a>
+            <% } %>
+        </div>
+
     </aside>
 
 <main class="main-content">
@@ -65,6 +64,26 @@
     <!-- Main Content Area (under profile header) -->
     <section class="profile-body">
         
+        <!-- Your Cafe -->
+        <h2 class="section-title">Your Cafe</h2>
+
+        <% if (userCafes && userCafes.length > 0) { %>
+        <% userCafes.forEach(function(cafe) { %>
+            <div class="post-card-owner">
+            <img src="<%= cafe.cafe_img %>" alt="<%= cafe.cname %>" class="post-img-owner">
+            
+            <div class="post-info-owner">
+                <h2><%= cafe.cname %></h2>
+                <p><%= cafe.caddress %>, <%= cafe.ccity %>, <%= cafe.czip %></p>
+                <p><%= cafe.cphonenum %></p>
+                <p><%= cafe.cdescription %></p>
+            </div>
+            </div>
+        <% }); %>
+        <% } else { %>
+        <p class="no-posts">No cafes registered to this account yet.</p>
+        <% } %>
+
         <!-- Shared Posts Section -->
         <h2 class="section-title">Shared Posts</h2>
         

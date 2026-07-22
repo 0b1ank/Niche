@@ -89,3 +89,28 @@
     color: #888;
     font-style: italic;
 }
+
+/* Container for each cafe card */
+.post-card-owner {
+  display: flex;
+  flex-direction: row; /* Aligns image and text side-by-side */
+  gap: 20px;           /* Pushes text away from the image */
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+/* Image styling */
+.post-img-owner {
+  width: 250px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;      /* Prevents the image from squeezing */
+}
+
+/* Text container */
+.post-info-owner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
