@@ -77,7 +77,7 @@
                 </div>
             <% } else { %>
 
-                <% posts.forEach(post) => { %>
+                <% posts.forEach((post) => { %>
                     <article class="cafe-card card">
                         <div class="post-header">
                             <img
@@ -117,12 +117,12 @@
                                 <%= post.description %>
                             </p>
 
-                            <a href="/post/<% post.pid  %>" class="view-post-link">
+                            <a href="/posts/<%= post.pid %>" class="view-post-link">
                                 View full post
                             </a>
                         </div>
                     </article>
-                <% } %>
+                <% }) %>
             <% } %>
         </section>
     </main>
