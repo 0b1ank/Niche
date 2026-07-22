@@ -61,4 +61,38 @@ router.post(
     }
 )
 
+// Show the community review feed
+router.get("/", async (req, res) => {
+    try {
+        const result = await client.query(
+            `SELECT
+                posts.pid,
+                posts.image
+                posts.pid,
+                posts.image,
+                posts.description,
+                posts.rating,
+                users.uid
+                users.uname,
+                users.pfp,
+                cafes.cid
+                cafes.cname
+            FROM posts
+            JOIN users
+                ON posts.user_id = users.uid
+            JOIN users 
+                ON posts.cafe_id = cafes.cid
+            ORDER BY posts.pid DESC`
+        )
+
+        res.render("feed", {
+            user: req.user || null,
+            posts: result.rows, 
+        })
+    } catch(err) {
+        console.error("failed to load community feed:", err.message)
+        res.status(500).send("Could not load the community feed.")
+    }
+})
+
 module.exports = router
