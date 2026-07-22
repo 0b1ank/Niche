@@ -16,8 +16,9 @@ router.post("/", ensureAuthenticated, ensureOwner, (req, res, next) => {
   // handle the optional cafe image upload first
   upload.single("cafe_img")(req, res, (err) => {
     if (err) {
-      return res.status(400).render("create-cafe", {
+      return res.status(400).render("createPost", {
         user: req.user,
+        cafes: [],
         error: err.message,
       })
     }
@@ -28,8 +29,9 @@ router.post("/", ensureAuthenticated, ensureOwner, (req, res, next) => {
     const { cname, caddress, ccity, czip, cphonenum, cdescription } = req.body
 
     if (!cname) {
-      return res.status(400).render("create-cafe", {
+      return res.status(400).render("createPost", {
         user: req.user,
+        cafes: [],
         error: "Cafe name is required",
       })
     }
