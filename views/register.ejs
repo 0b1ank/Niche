@@ -57,7 +57,7 @@
                 <input type="file" id="pfp" name="pfp" accept="image/*" style="display: none;">
 
                 <div class="upload-row">
-                    <button type="button" class="user-btn upload-btn" id="uploadTriggerBtn">
+                    <button type="button" class="upload-btn" id="uploadTriggerBtn">
                         <i class="bx bx-upload"></i> 
                         <span>Upload Photo</span>
                     </button>
@@ -66,6 +66,7 @@
                         <i class='bx bx-user'></i>
                     </div>
                 </div>
+                <br/>
 
                 <label>Account Type</label>
 
@@ -73,15 +74,17 @@
                 <input type="hidden" name="role" id="roleInput" value="user">
 
                 <div class="role-row">
-                    <button type="button" class="user-btn role-btn role-btn-owner" id="ownerBtn">
-                        <i class='bx bx-briefcase'></i>
-                        <span>Owner</span>
-                    </button>
-                    <button type="button" class="user-btn role-btn role-btn-user active" id="userBtn">
+                    <button type="button" class="acc-type-btn active" id="userBtn">
                         <i class='bx bx-user'></i>
                         <span>User</span>
                     </button>
+                    <button type="button" class="acc-type-btn" id="ownerBtn">
+                        <i class='bx bx-briefcase'></i>
+                        <span>Owner</span>
+                    </button>
                 </div>
+
+                <br/>
 
                 <button type="submit" class="submit-btn">Register</button>
             </div>
@@ -137,6 +140,29 @@
                 userBtn.classList.remove('active');
             });
         });
+
+        const ownerBtn = document.getElementById('ownerBtn');
+        const userBtn = document.getElementById('userBtn');
+        const roleInput = document.getElementById('roleInput');
+
+        ownerBtn.addEventListener('click', () => {
+            // Highlight Owner, unhighlight User
+            ownerBtn.classList.add('active');
+            userBtn.classList.remove('active');
+            
+            // Update hidden input for backend
+            roleInput.value = 'owner';
+        });
+
+        userBtn.addEventListener('click', () => {
+            // Highlight User, unhighlight Owner
+            userBtn.classList.add('active');
+            ownerBtn.classList.remove('active');
+            
+            // Update hidden input for backend
+            roleInput.value = 'user';
+        });
+        
     </script>
 </body>
 </html>
