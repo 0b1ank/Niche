@@ -1,11 +1,12 @@
-require("dotenv").config() // uses dotenv to parse the .env file and grab necessary info
+// load env vars from .env file
+require("dotenv").config()
 
-// Prefer IPv4 when talking to Google — avoids some TLS/ECONNRESET failures on macOS
+// helps google login work better on mac
 const dns = require("dns")
 dns.setDefaultResultOrder("ipv4first")
 
 const express = require("express")
-const path = require("path") // <-- Added path module for clean static routing
+const path = require("path")
 const bcrypt = require("bcrypt")
 const session = require("express-session")
 const passport = require("./config/passport")
@@ -18,13 +19,14 @@ const authRouter = require("./routes/auth")
 const app = express()
 const PORT = process.env.PORT || 3000
 
+// parse json and form data from requests
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-// FIX: Serves static files (CSS, JS, images) using an absolute path to /public
+// serve css, images, and uploaded files from the public folder
 app.use(express.static(path.join(__dirname, "public")))
 
-// Session must come before passport.session()
+// session has to be set up before passport can use it
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
@@ -37,7 +39,9 @@ app.use(passport.session())
 
 app.set("view engine", "ejs")
 
+// google login and finish-signup live under /auth
 app.use("/auth", authRouter)
+// owners create cafes through /cafes
 app.use("/cafes", cafesRouter)
 
 // Home page: loads cafes from Postgres and renders them (accessible to everyone)
@@ -103,8 +107,9 @@ app.get("/register", (req, res) => {
     res.render("register")
 })
 
-// handle register form submit (also takes the optional pfp upload)
+// register: hash password, save user, optional profile pic upload
 app.post("/register", (req, res, next) => {
+    // multer runs first so we can grab the uploaded image if there is one
     upload.single("pfp")(req, res, (err) => {
         if (err) {
             return res.status(400).render("register", { error: err.message })
@@ -121,6 +126,7 @@ app.post("/register", (req, res, next) => {
             })
         }
 
+        // owner can add cafes later, user can just browse and review
         const urole = role === "owner" ? "owner" : "user"
         const pfp = req.file ? `/uploads/${req.file.filename}` : null
         const hashedPassword = await bcrypt.hash(password, 10)

@@ -9,6 +9,7 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
+    <%# profile page mockup, not hooked up to the server yet %>
     <aside class="sidebar">
         <div class="sidebar-header">
         </div>
@@ -105,7 +106,7 @@
     </main>
 
     <script>
-        // Temporary intercept logic managing UI testing flow
+        // placeholder script for testing the profile ui
         document.getElementById('newAccountForm').addEventListener('newAccount', (e) => {
             e.preventDefault(); // Stop page from refreshing on form submit
             
@@ -121,67 +122,59 @@
             const realFileInput = document.getElementById('realFileInput');
             const avatarPreview = document.getElementById('avatarPreview');
 
-            // 1. Forward the click event from your fancy button over to the hidden input tag
+            // open file picker when upload button is clicked
             uploadTriggerBtn.addEventListener('click', () => {
                 realFileInput.click();
             });
 
-            // 2. Listen for when a file is successfully chosen by the browser user
+            // show preview of selected photo
             realFileInput.addEventListener('change', function() {
-                const file = this.files[0]; // Grab the first chosen file
+                const file = this.files[0];
 
                 if (file) {
                     const reader = new FileReader();
 
-                    // When the file reader engine successfully processes the document stream:
                     reader.onload = function(e) {
-                        // Generate a real dynamic image tag containing the processed data URL
                         avatarPreview.innerHTML = `<img src="${e.target.result}" alt="User Profile Preview">`;
                     }
 
-                    // Instruct the browser to read the local target file into a base64 encoded URL string
                     reader.readAsDataURL(file);
                 }
             });
         });
-        // 1. Initialize a state tracking variable. Default to 'user'.
+
+        // track which role button is selected
         let chosenRole = 'user'; 
 
-        // 2. Grab references to both elements in the DOM
         const userBtn = document.querySelector('.role-btn-user');
         const ownerBtn = document.querySelector('.role-btn-owner');
 
-        // 3. Setup the Selection Listener Logic for the USER button
         userBtn.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevents the link '#' from jumping the page scroll
+            event.preventDefault();
             
-            chosenRole = 'user';    // Update our tracking variable
+            chosenRole = 'user';
             
-            userBtn.classList.add('active');     // Light up the user button
-            ownerBtn.classList.remove('active'); // Turn off the owner button
-            console.log("Current role selection updated to:", chosenRole);
+            userBtn.classList.add('active');
+            ownerBtn.classList.remove('active');
         });
 
-        // 4. Setup the Selection Listener Logic for the OWNER button
         ownerBtn.addEventListener('click', (event) => {
             event.preventDefault();
             
-            chosenRole = 'owner';   // Update our tracking variable
+            chosenRole = 'owner';
             
-            ownerBtn.classList.add('active');    // Light up the owner button
-            userBtn.classList.remove('active');  // Turn off the user button
-            console.log("Current role selection updated to:", chosenRole);
+            ownerBtn.classList.add('active');
+            userBtn.classList.remove('active');
         });
 
-        // 5. Example Form Submit function showing how that variable is used
+        // example of how role would get sent on register
         function registerAccount() {
             const registrationData = {
-                username: document.getElementById('username').value, // assuming you have an input with this ID
-                roleId: chosenRole                                   // This safely reads 'user' or 'owner'!
+                username: document.getElementById('username').value,
+                roleId: chosenRole
             };
 
             console.log("Submitting account payload to database:", registrationData);
-            // Next step: send registrationData to your database server!
         }
 
     </script>
