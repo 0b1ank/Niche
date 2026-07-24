@@ -44,6 +44,15 @@ CREATE TABLE cafe_tags (
   PRIMARY KEY (cafe_id, tag_id)
 );
 
+CREATE TABLE likes (
+  lid SERIAL PRIMARY KEY,
+  post_id INTEGER NOT NULL REFERENCES posts(pid) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(uid) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+  UNIQUE(post_id, user_id)
+);
+
 CREATE TABLE favorites (
   user_id INTEGER NOT NULL REFERENCES users(uid) ON DELETE CASCADE,
   cafe_id INTEGER NOT NULL REFERENCES cafes(cid) ON DELETE CASCADE,
