@@ -267,7 +267,7 @@ async function rankForUser(
     collabMap = await loadCollabMap(profile.topRatedCafeIds[0]);
   }
 
-  return all
+  const rankedCafes = all
     .map((c) => {
       let content = contentScore(c, reference);
 
@@ -275,7 +275,7 @@ async function rankForUser(
       if (query) {
         const q = query.toLowerCase();
         const nameHit = (c.cname || "").toLowerCase().includes(q) ? 0.2 : 0;
-        const tagHit = (c.tags || []).some((t) => t.includes(q)) ? 0.15 : 0;
+        const tagHit = (c.tags || []).some((t) => t.toLowerCase().includes(q)) ? 0.15 : 0;
         content = Math.min(1, content + nameHit + tagHit);
       }
 
@@ -291,8 +291,27 @@ async function rankForUser(
       });
       return { ...c, score };
     })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit);
+    .sort((a, b) => {
+      if(b.score !== a.score) {
+        return b.score - a.score;
+      }
+
+      return Number(b.cid) - Number(a.cid)
+    });
+
+    const newestCafes = [...rankedCafes]
+      .sort((a,b) => Number(b.cid) - Number(a.cid))
+      .slice(0,3);
+
+      const combinedCafes = [...newestCafes, ...rankedCafes]
+
+    const uniqueCafes = Array.from(
+      new Map(
+        combinedCafes.map((cafe) => [cafe.cid, cafe])
+      ).values()
+    );
+
+    return uniqueCafes.slice(0,limit);
 }
 
 module.exports = { similarToCafe, rankForUser };

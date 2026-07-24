@@ -60,7 +60,7 @@ router.post("/", ensureAuthenticated, ensureOwner, (req, res, next) => {
     res.redirect("/")
   } catch (err) {
     console.error("create cafe failed:", err.message)
-    res.status(500).render("create-cafe", {
+    res.status(500).render("createPost", {
       user: req.user,
       error: "Could not create cafe. Please try again.",
     })
