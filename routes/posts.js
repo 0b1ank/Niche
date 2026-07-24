@@ -68,6 +68,19 @@ router.post(
 // Show the community review feed
 router.get("/", async (req, res) => {
     try {
+        const search = (req.query.search || "").trim()
+
+        const values = []
+        let whereClause = ""
+
+        if(search) {
+            values.push(`%${search}%`)
+
+            whereClause = `
+                WHERE users.uname ILIKE $1
+            `
+        }
+
         const result = await client.query(
             `SELECT
                 posts.pid,
@@ -84,12 +97,15 @@ router.get("/", async (req, res) => {
                 ON posts.user_id = users.uid
             JOIN cafes
                 ON posts.cafe_id = cafes.cid
-            ORDER BY posts.pid DESC`
+            ${whereClause}
+                ORDER BY posts.pid DESC`,
+            values
         )
 
         res.render("feed", {
             user: req.user || null,
             posts: result.rows, 
+            search,
         })
     } catch(err) {
         console.error("failed to load community feed:", err.message)
