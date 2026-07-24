@@ -22,8 +22,9 @@ router.post(
     },
     async (req, res) => {
         try {
+            //gets cafeId desc and rating
             const { cafeId, description, rating } = req.body
-
+            //verifies the above is valid
             if (!cafeId || !description || !rating) {
                 return res.status(400).send("Cafe, description, and rating are required.")
             }
@@ -45,6 +46,7 @@ router.post(
            
             const imagePath = req.file ? `/uploads/${req.file.filename}` : null
 
+            //inserts review into posts dB 
             await client.query(
                 `INSERT INTO posts
                     (cafe_id, user_id, image, description, rating)
@@ -65,40 +67,123 @@ router.post(
     }
 )
 
+//Like or unlike a review post 
+router.post("/:id/like", ensureAuthenticated, async (req, res) => {
+    try {
+        //get post and user id
+        const postId = Number(req.params.id)
+        const userId = req.user.uid
+
+        //verify you got a valid post id number
+        if(!Number.isInteger(postId)) {
+            return res.status(400).send("Invalid post.")
+        }
+
+        //checks if a like already exists
+        const existingLike = await client.query(
+            `SELECT lid
+            FROM likes
+            WHERE post_id = $1
+            AND user_id = $2
+            `,
+            [postId, userId]
+        )
+
+        // removes a like
+        if(existingLike.rows.length > 0) {
+            await client.query(
+                `DELETE FROM likes
+                WHERE post_id = $1
+                AND user_id = $2`,
+                [postId, userId]
+            )
+        } else {
+            //adds a like
+            await client.query(
+                `INSERT INTO likes (post_id, user_id)
+                VALUES ($1,$2)`,
+                [postId,userId]
+            )
+        }
+        
+        res.redirect("/posts")
+    } catch(err) {
+        console.error("like failed:", err.message)
+        res.status(500).send("Could not update like.")
+    } 
+})
+
 // Show the community review feed
 router.get("/", async (req, res) => {
     try {
+        // gets search value in the search bar
         const search = (req.query.search || "").trim()
 
+        //stores values that will replace placeholders in SQL
         const values = []
-        let whereClause = ""
-
+        //stores SQL conditions
+        const conditions = []
+        
+        //checks if search value is there only look for a user if there was 
         if(search) {
+            // add symbols to actually be able to search in usernames and add its condition
             values.push(`%${search}%`)
-
-            whereClause = `
-                WHERE users.uname ILIKE $1
-            `
+            conditions.push(`users.uname ILIKE $${values.length}`)
         }
 
+        // gets current user (null if not logged in)
+        const currentUserId = req.user ? req.user.uid : null
+        // adds id for the SQL values array 
+        values.push(currentUserId)
+        
+        //creates an SQL placeholder for the current users id
+        const currentUserPlaceholder = `$${values.length}`
+
+        // builds WHERE for SQL query
+        const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : ""
+
+        // run SQL and save result for the Db
         const result = await client.query(
             `SELECT
                 posts.pid,
                 posts.image,
                 posts.description,
                 posts.rating,
+                posts.created_at,
                 users.uid,
                 users.uname,
                 users.pfp,
                 cafes.cid,
-                cafes.cname
+                cafes.cname,
+
+                COUNT(likes.lid)::int AS like_count,
+
+                EXISTS (
+                    SELECT 1 
+                    FROM likes user_likes
+                    WHERE user_likes.post_id = posts.pid
+                    AND user_likes.user_id = ${currentUserPlaceholder}
+                ) AS liked_by_user
             FROM posts
             JOIN users
                 ON posts.user_id = users.uid
             JOIN cafes
                 ON posts.cafe_id = cafes.cid
+            LEFT JOIN likes
+                ON likes.post_id = posts.pid
             ${whereClause}
-                ORDER BY posts.pid DESC`,
+            GROUP BY
+                posts.pid,
+                posts.image,
+                posts.description,
+                posts.rating,
+                posts.created_at,
+                users.uid,
+                users.uname,
+                users.pfp,
+                cafes.cid,
+                cafes.cname
+            ORDER BY posts.pid DESC`,
             values
         )
 
